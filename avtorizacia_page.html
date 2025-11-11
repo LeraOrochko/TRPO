@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Гостиница L&N — Авторизация</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+  <a href="important_page.html"></a>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Playfair Display', serif;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      margin: 20px 0;
+      padding: 20px 40px;
+      width: 100%;
+      max-width: 98%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    .logo a {
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 600;
+      color: #4C3B3B;
+      text-decoration: none;
+    }
+
+    .nav {
+      display: flex;
+      gap: 40px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-style: italic;
+      font-weight: 600;
+      text-decoration: none;
+      color: #4C3B3B;
+    }
+
+    .nav-item img {
+      width: 33px;
+      height: 33px;
+      border-radius: 50%;
+    }
+
+    .auth-wrapper {
+      display: flex;
+      width: 90%;
+      max-width: 1200px;
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(76, 59, 59, 0.3);
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      margin-bottom: 40px;
+    }
+
+    .image-side {
+      width: 400px;
+      height: auto;
+      background-image: url('орхидея.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px 20px;
+      color: #4C3B3B;
+    }
+
+    .overlay-text {
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 15px;
+      border-radius: 40px;
+      font-size: 20px;
+      font-style: italic;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .register-button {
+      padding: 12px 24px;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      border-radius: 30px;
+      font-size: 16px;
+      font-style: italic;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      align-self: center;
+      margin-top: 20px;
+      
+    }
+
+    .register-button:hover {
+      background-color: #f3a9c0;
+    }
+
+    .form-side {
+      flex: 1;
+      background-color: #E3A6B6;
+      padding: 60px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .auth-title-box {
+      background-color: #FFBBCE;
+      border-radius: 20px;
+      padding: 15px;
+      text-align: center;
+      font-size: 28px;
+      font-style: italic;
+      font-weight: 600;
+      color: #4C3B3B;
+      margin-bottom: 20px;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      border-radius: 60px; /* более округлый */ 
+      align-items: center; 
+      max-width: 400px;       /* ограничивает ширину блока */
+      width: 100%;            /* позволяет адаптироваться */
+      margin-left: auto;      /* центрирует слева */
+      margin-right: auto;      
+    }
+
+    label {
+      font-size: 18px;
+      font-style: italic;
+      margin-bottom: 5px;
+    }
+
+    input {
+      padding: 10px 15px;
+      border-radius: 20px;
+      border: 1px solid rgba(76, 59, 59, 0.5);
+      font-size: 16px;
+      font-family: 'Playfair Display', serif;
+      background-color: #fff;
+      color: #4C3B3B;
+      width: 100%;
+    }
+
+    .form-button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      border-radius: 30px;
+      font-size: 16px;
+      font-style: italic;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      max-width: 300px;       /* ограничивает ширину блока */
+      width: 100%;            /* позволяет адаптироваться */
+      margin-left: auto;      /* центрирует слева */
+      margin-right: auto; 
+      align-self: center;
+    }
+
+    .form-button:hover {
+      background-color: #d48fa3;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .auth-wrapper {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .image-side {
+        width: 100%;
+        padding: 20px;
+      }
+
+      .form-side {
+        padding: 40px 20px;
+      }
+
+      .nav {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <a href="important_page.html" style="color: #4C3B3B;">Гостиница L&N</a>
+    </div>
+    <nav class="nav">
+      <a href="booking.html" class="nav-item">
+        <img src="бронирование.jpg" alt="Бронирование"> Бронирование
+      </a>
+      <a href="info_o_nas.html" class="nav-item">
+        <img src="онас.jpg" alt="О нас"> О нас
+      </a>
+      <a href="avtorizacia_page.html" class="nav-item">
+        <img src="войти.jpg" alt="Войти"> 
+      </a>
+      Войти
+      <a href="info.html" class="nav-item">
+        <img src="инфа.jpg" alt="Информация">
+      </a>
+    </nav>
+  </header>
+
+  <div class="auth-wrapper">
+    <div class="image-side">
+      <div class="overlay-text">Ещё нет аккаунта?</div>
+      <button class="register-button"><a href="registrazia_page.html" style="color: #4C3B3B;">Зарегистрироваться</a> </button>
+    </div>
+
+    <div class="form-side">
+      <div class="auth-title-box">Авторизация</div>
+
+      <label for="username">Логин:</label>
+      <input type="text" id="username" name="username" placeholder="Введите логин">
+
+      <label for="email">Электронная почта:</label>
+      <input type="email" id="email" name="email" placeholder="Введите email">
+
+      <label for="password">Пароль:</label>
+      <input type="password" id="password" name="password" placeholder="Введите пароль">
+
+      <button class="form-button">Войти</button>
+    </div>
+  </div>
+
+</body>
+</html>
