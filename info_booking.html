@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Гостиница L&N — Информация_брони</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+  <a href="important_page.html"></a>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Playfair Display', serif;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+    }
+
+    header {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      margin: 20px;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    .logo {
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .nav {
+      display: flex;
+      gap: 40px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-style: italic;
+      font-weight: 600;
+      text-decoration: none;
+      color: #4C3B3B;
+    }
+
+    .nav-item img {
+      width: 33px;
+      height: 33px;
+      border-radius: 50%;
+    }
+
+    main {
+      margin: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .booking-wrapper {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      padding: 40px;
+      width: 100%;
+      max-width: 1200px;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      box-shadow: 0 0 10px rgba(76, 59, 59, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .booking-title {
+      background-color: #FFBBCE;
+      border-radius: 30px;
+      padding: 15px 20px;
+      font-size: 28px;
+      font-style: italic;
+      font-weight: 600;
+      text-align: center;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    .booking-row {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .booking-block {
+      background-color: #FFBBCE;
+      border-radius: 30px;
+      padding: 30px;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      flex: 1 1 45%;
+      min-width: 300px;
+    }
+
+    .booking-block p,
+    .booking-block li {
+      font-size: 18px;
+      line-height: 1.8;
+      font-style: italic;
+      text-align: left;
+    }
+
+    .booking-block ul {
+      margin-left: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .nav {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .booking-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo"><a href="important_page.html" style="color: #4C3B3B;">Гостиница L&N</a></div>
+    <nav class="nav">
+      <div class="nav-item">
+        <a href="info_booking.html"><img src="бронирование.jpg" alt="Бронирование"></a>
+        Бронирование
+      </div>
+      <div class="nav-item">
+        <a href="info_o_nas.html">
+          <img src="онас.jpg" alt="О нас">  
+        </a>
+        О нас
+      </div>
+      <div class="nav-item">
+        <a href="avtorizacia_page.html">
+          <img src="войти.jpg" alt="Войти">
+        </a>
+        Войти
+      </div>
+      <div class="nav-item">
+       <a href="basa_dannix.html"><img src="инфа.jpg" alt="Информация"></a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="booking-wrapper">
+      <div class="booking-title">Бронирование</div>
+
+      <div class="booking-row">
+        <div class="booking-block">
+          <ol>
+            <li>Выберите даты проживания <br>Укажите желаемые даты заезда и выезда. Рекомендуем бронировать заранее. Заявку необходимо оставить за 2 недели.</li>
+            <li> Выберите тип номера<br>Мы предлагаем:
+               <ul>
+                <li>Экономный номер</li>
+                <li>Стандартный номер</li>
+                <li>Люксовый номер</li>
+              </ul>
+              Каждый номер оснащён Wi-Fi, телевизором, санузлом и системой кондиционирования.
+            </li>
+            <li>Свяжитесь с нами: <br> Вы можете оформить бронь:
+              <ul>
+                <li>По телефону: +375 (25) 123-45-67</li>
+                <li>По email: booking@lnhotel.by</li>
+                <li>Через форму на сайте</li>
+              </ul>
+              Укажите:
+               <ul>
+                <li>ФИО</li>
+                <li>Контактный номер</li>
+                <li>Даты проживания</li>
+                <li>Тип номера</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+
+        <div class="booking-block">
+          <ol start="4">
+            <li>Оплата <br> Вы можете оплатить:
+              <ul>
+                <li>При заселении (наличными или картой)</li>
+              </ul>
+              Для гарантии брони может потребоваться предоплата — об этом вас заранее уведомят.
+            </li>
+            <li>Заселение<br>При заселении предъявите:
+              <ul>
+                <li>Паспорт</li>
+                <li>Номер брони или подтверждение</li>
+              </ul>
+              Заселение с 14:00, выезд до 12:00. Возможен ранний заезд или поздний выезд по предварительной договорённости.<br>Дополнительная информация
+              <ul>
+                <li>Бесплатная отмена брони — за 48 часов до заезда</li>
+                <li>Парковка и завтрак включены в стоимость</li>
+                <li>Мы говорим на русском и английском</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>
