@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template, jsonify, session, redirect, url_for
+from flask import Flask, request, jsonify, session, redirect, url_for
+from functools import wraps
 import sqlite3
 import os
 import datetime
@@ -59,11 +60,10 @@ def init_db():
 
             CREATE TABLE IF NOT EXISTS guest (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                first_name VARCHAR(100) NOT NULL,
-                last_name VARCHAR(100) NOT NULL,
-                email VARCHAR(255),
-                phone VARCHAR(20),
-                passport VARCHAR(50) UNIQUE
+                username VARCHAR(50) UNIQUE NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
             CREATE TABLE IF NOT EXISTS booking (
@@ -71,11 +71,12 @@ def init_db():
                 guest_id INTEGER NOT NULL,
                 room_type_id INTEGER NOT NULL,
                 assigned_room_id INTEGER,
-                desired_check_in_date DATE NOT NULL,
-                desired_duration INTEGER NOT NULL,
-                desired_check_out_date DATE,
-                actual_check_in_date DATE,
-                actual_check_out_date DATE,
+                first_name VARCHAR(100) NOT NULL,
+                last_name VARCHAR(100) NOT NULL,
+                passport VARCHAR(50) NOT NULL,
+                phone VARCHAR(20) NOT NULL,
+                check_in_date DATE NOT NULL,
+                check_out_date DATE NOT NULL,
                 status VARCHAR(20) DEFAULT 'pending',
                 total_price DECIMAL(10, 2),
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -91,20 +92,20 @@ def init_db():
                 INSERT INTO room_type (name, description, base_price_per_night, max_guests)
                 VALUES (?, ?, ?, ?)
             ''', [
+                ('Эконом', 'Бюджетный номер с минимальными удобствами', 1500.00, 1),
                 ('Стандарт', 'Стандартный номер с одной кроватью', 2500.00, 2),
-                ('Комфорт', 'Улучшенный номер с TV и WiFi', 3500.00, 2),
-                ('Люкс', 'Просторный номер с дополнительными удобствами', 5000.00, 3)
+                ('Люкс', 'Просторный номер с дополнительными удобствами', 5000.00, 2)
             ])
 
             cur.executemany('''
                 INSERT INTO room (room_number, room_type_id, has_wifi, has_tv)
                 VALUES (?, ?, ?, ?)
             ''', [
-                ('101', 1, 0, 1), ('102', 1, 0, 1), ('103', 1, 0, 1),
-                ('201', 2, 1, 1), ('202', 2, 1, 1), ('203', 2, 1, 1),
-                ('301', 3, 1, 1), ('302', 3, 1, 1)
+                ('101', 1, 0, 0),  # Эконом
+                ('201', 2, 0, 1),  # Стандарт
+                ('301', 3, 1, 1)   # Люкс
             ])
-
+            
         cur.execute("SELECT COUNT(*) FROM admin")
         if cur.fetchone()[0] == 0:
             cur.execute('''
@@ -113,168 +114,246 @@ def init_db():
             ''', ('admin', hash_password('admin123'), 'admin@hotel.com', 'Главный Администратор'))
 
         conn.commit()
+        print("База данных успешно инициализирована")
         
     except Exception as e:
-        print(f"Ошибка: {e}")
+        print(f"Ошибка при инициализации БД: {e}")
         conn.rollback()
     finally:
         conn.close()
 
 @app.route("/")
 def index():
-    return '''
-    <h1>Гостиница</h1>
-    <a href="/booking-form">Бронирование</a> | 
-    <a href="/admin/login">Админ-панель</a> |
-    <a href="/debug-tables">Проверка БД</a>
-    '''
+    return jsonify({"message": "Гостиница API", "endpoints": ["/register_guest", "/guest/login", "/booking", "/admin"]})
 
-@app.route("/booking-form")
-def booking_form():
-    return '''
-    <h1>Бронирование номера</h1>
-    <form action="/create-booking" method="POST">
-        <input type="text" name="first_name" placeholder="Имя" required><br>
-        <input type="text" name="last_name" placeholder="Фамилия" required><br>
-        <input type="text" name="passport" placeholder="Паспорт" required><br>
-        <input type="text" name="phone" placeholder="Телефон" required><br>
-        <select name="room_type_id" required>
-            <option value="1">Стандарт</option>
-            <option value="2">Комфорт</option>
-            <option value="3">Люкс</option>
-        </select><br>
-        <input type="date" name="desired_date" required><br>
-        <input type="number" name="duration" placeholder="Количество дней" required><br>
-        <button type="submit">Забронировать</button>
-    </form>
-    '''
+@app.route("/register_guest", methods=["POST"])
+def register_guest():
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"error": "No JSON data provided"}), 400
+    
+    required_fields = ["username", "email", "password"]
+    for field in required_fields:
+        if field not in data or not data[field].strip():
+            return jsonify({"error": f"Missing required field: {field}"}), 400
 
-@app.route("/create-booking", methods=["POST"])
-def create_booking():
-    form = request.form
+    username = data["username"].strip()
+    email = data["email"].strip()
+    password = data["password"].strip()
+
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters"}), 400
+
     conn = get_db()
     cur = conn.cursor()
 
-    desired_date = form["desired_date"]
-    desired_dt = datetime.datetime.strptime(desired_date, "%Y-%m-%d").date()
-    today = datetime.date.today()
-    
-    if (desired_dt - today).days < 14:
-        return "Заявки принимаются не ранее, чем за 2 недели до заселения.", 400
-
-    cur.execute("INSERT OR IGNORE INTO guest (first_name, last_name, passport, phone) VALUES (?, ?, ?, ?)",
-                (form["first_name"], form["last_name"], form["passport"], form["phone"]))
-
-    cur.execute("SELECT id FROM guest WHERE passport = ?", (form["passport"],))
-    guest = cur.fetchone()
-    guest_id = guest["id"]
-
-    check_out_date = (desired_dt + timedelta(days=int(form["duration"]))).strftime("%Y-%m-%d")
-    
-    cur.execute("""
-        SELECT r.id FROM room r
-        WHERE r.room_type_id = ? 
-        AND r.is_active = 1
-        AND r.id NOT IN (
-            SELECT b.assigned_room_id FROM booking b
-            WHERE b.status IN ('confirmed', 'checked-in')
-            AND ? < b.desired_check_out_date
-            AND ? > b.desired_check_in_date
-        )
-        LIMIT 1
-    """, (form["room_type_id"], check_out_date, desired_date))
-    
-    available_room = cur.fetchone()
-
-    if available_room:
-        room_type_info = cur.execute("SELECT base_price_per_night FROM room_type WHERE id = ?", 
-                                   (form["room_type_id"],)).fetchone()
-        total_price = room_type_info["base_price_per_night"] * int(form["duration"])
+    try:
+        # Проверяем, нет ли уже пользователя с таким username или email
+        cur.execute("SELECT id FROM guest WHERE username = ? OR email = ?", (username, email))
+        existing_guest = cur.fetchone()
         
-        cur.execute("""
-            INSERT INTO booking (guest_id, room_type_id, assigned_room_id, desired_check_in_date, 
-                               desired_duration, desired_check_out_date, status, total_price)
-            VALUES (?, ?, ?, ?, ?, ?, 'confirmed', ?)
-        """, (guest_id, form["room_type_id"], available_room["id"], desired_date, 
-              form["duration"], check_out_date, total_price))
+        if existing_guest:
+            return jsonify({"error": "Username or email already exists"}), 400
+
+        # Хешируем пароль и создаем гостя
+        password_hash = hash_password(password)
+        
+        cur.execute('''
+            INSERT INTO guest (username, email, password_hash)
+            VALUES (?, ?, ?)
+        ''', (username, email, password_hash))
         
         conn.commit()
-        conn.close()
-        return "Заявка подтверждена! Номер забронирован.", 200
-    else:
-        alternatives = []
-        for days in range(1, 30):
-            alt_date = (desired_dt + timedelta(days=days)).strftime("%Y-%m-%d")
-            alt_check_out = (desired_dt + timedelta(days=days + int(form["duration"]))).strftime("%Y-%m-%d")
-            
-            cur.execute("""
-                SELECT COUNT(*) FROM room r
-                WHERE r.room_type_id = ? 
-                AND r.is_active = 1
-                AND r.id NOT IN (
-                    SELECT b.assigned_room_id FROM booking b
-                    WHERE b.status IN ('confirmed', 'checked-in')
-                    AND ? < b.desired_check_out_date
-                    AND ? > b.desired_check_in_date
-                )
-            """, (form["room_type_id"], alt_check_out, alt_date))
-            
-            if cur.fetchone()[0] > 0:
-                alternatives.append(alt_date)
-                if len(alternatives) >= 3:
-                    break
+        guest_id = cur.lastrowid
         
-        conn.close()
-        
-        if alternatives:
-            return f"Нет свободных номеров. Альтернативные даты: {', '.join(alternatives)}", 200
-        else:
-            return "Нет свободных номеров на ближайшие даты.", 200
+        return jsonify({
+            "message": "Guest registered successfully",
+            "guest_id": guest_id,
+            "username": username
+        }), 201
 
-@app.route("/admin/login", methods=["GET", "POST"])
-def admin_login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM admin WHERE username = ? AND is_active = 1", (username,))
-        admin_user = cur.fetchone()
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        return jsonify({"error": "Username or email already exists"}), 400
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": f"Registration failed: {str(e)}"}), 500
+    finally:
         conn.close()
-        
-        if admin_user and admin_user["password_hash"] == hash_password(password):
-            session["admin_id"] = admin_user["id"]
-            session["admin_username"] = admin_user["username"]
-            session["admin_name"] = admin_user["full_name"]
-            return redirect(url_for("admin_dashboard"))
-        else:
-            return "Неверные учетные данные"
+
+@app.route("/guest/login", methods=["POST"])
+def guest_login():
+    data = request.get_json()
     
-    return '''
-    <h1>Вход для администратора</h1>
-    <form method="POST">
-        <input type="text" name="username" placeholder="Логин" required><br>
-        <input type="password" name="password" placeholder="Пароль" required><br>
-        <button type="submit">Войти</button>
-    </form>
-    '''
+    if not data or "username" not in data or "password" not in data:
+        return jsonify({"error": "Username and password required"}), 400
+    
+    username = data["username"]
+    password = data["password"]
+    
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM guest WHERE username = ?", (username,))
+    guest = cur.fetchone()
+    conn.close()
+    
+    if guest and guest["password_hash"] == hash_password(password):
+        session["guest_id"] = guest["id"]
+        session["guest_username"] = guest["username"]
+        return jsonify({
+            "message": "Login successful",
+            "guest": {
+                "id": guest["id"],
+                "username": guest["username"],
+                "email": guest["email"]
+            }
+        })
+    else:
+        return jsonify({"error": "Invalid credentials"}), 401
 
-@app.route("/admin/logout")
-def admin_logout():
-    session.clear()
-    return redirect(url_for("admin_login"))
+@app.route("/booking", methods=["POST"])
+def create_booking():
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"error": "No JSON data provided"}), 400
+    
+    required_fields = ["guest_id", "first_name", "last_name", "passport", "phone", "room_type_id", "check_in_date", "check_out_date"]
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing required field: {field}"}), 400
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    try:
+        guest_id = data["guest_id"]
+        first_name = data["first_name"]
+        last_name = data["last_name"]
+        passport = data["passport"]
+        phone = data["phone"]
+        room_type_id = data["room_type_id"]
+        check_in_date = data["check_in_date"]
+        check_out_date = data["check_out_date"]
+
+        # Проверяем существование гостя
+        cur.execute("SELECT id FROM guest WHERE id = ?", (guest_id,))
+        guest = cur.fetchone()
+        if not guest:
+            return jsonify({"error": "Guest not found"}), 404
+
+        # Проверяем доступность номера
+        cur.execute("""
+            SELECT r.id FROM room r
+            WHERE r.room_type_id = ? 
+            AND r.is_active = 1
+            AND r.id NOT IN (
+                SELECT b.assigned_room_id FROM booking b
+                WHERE b.status IN ('confirmed', 'checked-in')
+                AND ? < b.check_out_date
+                AND ? > b.check_in_date
+            )
+            LIMIT 1
+        """, (room_type_id, check_out_date, check_in_date))
+        
+        available_room = cur.fetchone()
+        
+        # Рассчитываем стоимость
+        cur.execute("SELECT base_price_per_night FROM room_type WHERE id = ?", (room_type_id,))
+        room_type_info = cur.fetchone()
+        
+        # Вычисляем количество ночей
+        check_in = datetime.datetime.strptime(check_in_date, "%Y-%m-%d").date()
+        check_out = datetime.datetime.strptime(check_out_date, "%Y-%m-%d").date()
+        nights = (check_out - check_in).days
+        total_price = room_type_info["base_price_per_night"] * nights
+        
+        if available_room:
+            # Есть свободный номер - подтверждаем бронь
+            cur.execute("""
+                INSERT INTO booking (guest_id, room_type_id, assigned_room_id, first_name, last_name, 
+                                   passport, phone, check_in_date, check_out_date, status, total_price)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'confirmed', ?)
+            """, (guest_id, room_type_id, available_room["id"], first_name, last_name, 
+                  passport, phone, check_in_date, check_out_date, total_price))
+            
+            conn.commit()
+            return jsonify({
+                "message": "Бронирование подтверждено! Номер забронирован.",
+                "booking_id": cur.lastrowid,
+                "total_price": total_price,
+                "status": "confirmed"
+            }), 200
+        else:
+            # Нет свободных номеров - создаем бронь в статусе pending
+            cur.execute("""
+                INSERT INTO booking (guest_id, room_type_id, first_name, last_name, 
+                                   passport, phone, check_in_date, check_out_date, status, total_price)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
+            """, (guest_id, room_type_id, first_name, last_name, 
+                  passport, phone, check_in_date, check_out_date, total_price))
+            
+            conn.commit()
+            return jsonify({
+                "message": "Бронирование создано. Ожидается подтверждение администратора.",
+                "booking_id": cur.lastrowid,
+                "total_price": total_price,
+                "status": "pending"
+            }), 200
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
 
 def admin_required(f):
-    from functools import wraps
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if "admin_id" not in session:
-            return redirect(url_for("admin_login"))
+            return jsonify({"error": "Authentication required"}), 401
         return f(*args, **kwargs)
     return decorated_function
 
-@app.route("/admin")
+@app.route("/admin/login", methods=["POST"])
+def admin_login():
+    data = request.get_json()
+    
+    if not data or "username" not in data or "password" not in data:
+        return jsonify({"error": "Username and password required"}), 400
+    
+    username = data["username"]
+    password = data["password"]
+    
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM admin WHERE username = ? AND is_active = 1", (username,))
+    admin_user = cur.fetchone()
+    conn.close()
+    
+    if admin_user and admin_user["password_hash"] == hash_password(password):
+        session["admin_id"] = admin_user["id"]
+        session["admin_username"] = admin_user["username"]
+        session["admin_name"] = admin_user["full_name"]
+        return jsonify({
+            "message": "Login successful",
+            "admin": {
+                "id": admin_user["id"],
+                "username": admin_user["username"],
+                "full_name": admin_user["full_name"],
+                "email": admin_user["email"]
+            }
+        })
+    else:
+        return jsonify({"error": "Неверные учетные данные"}), 401
+
+@app.route("/admin/logout", methods=["POST"])
+def admin_logout():
+    session.clear()
+    return jsonify({"message": "Logged out successfully"})
+
+@app.route("/admin/dashboard")
 @admin_required
 def admin_dashboard():
     conn = get_db()
@@ -292,28 +371,14 @@ def admin_dashboard():
     cur.execute("SELECT COUNT(*) FROM guest")
     total_guests = cur.fetchone()[0]
     
-    cur.execute("""
-        SELECT b.*, g.first_name, g.last_name, rt.name as room_type_name
-        FROM booking b
-        JOIN guest g ON b.guest_id = g.id
-        JOIN room_type rt ON b.room_type_id = rt.id
-        ORDER BY b.created_at DESC LIMIT 5
-    """)
-    recent_bookings = cur.fetchall()
-    
     conn.close()
     
-    return f'''
-    <h1>Панель администратора</h1>
-    <p>Активные брони: {active_bookings}</p>
-    <p>Ожидающие заявки: {pending_requests}</p>
-    <p>Всего номеров: {total_rooms}</p>
-    <p>Зарегистрировано гостей: {total_guests}</p>
-    <a href="/admin/bookings">Управление бронями</a> | 
-    <a href="/admin/rooms">Номера</a> | 
-    <a href="/admin/logout">Выйти</a>
-    <h3>Последние бронирования:</h3>
-    ''' + "<br>".join([f"{b['first_name']} {b['last_name']} - {b['room_type_name']} - {b['desired_check_in_date']}" for b in recent_bookings])
+    return jsonify({
+        "active_bookings": active_bookings,
+        "pending_requests": pending_requests,
+        "total_rooms": total_rooms,
+        "total_guests": total_guests
+    })
 
 @app.route("/admin/bookings")
 @admin_required
@@ -324,7 +389,7 @@ def admin_bookings():
     cur.execute("""
         SELECT 
             b.*,
-            g.first_name, g.last_name, g.phone, g.email,
+            g.username, g.email,
             rt.name as room_type_name,
             r.room_number
         FROM booking b
@@ -337,102 +402,25 @@ def admin_bookings():
     
     conn.close()
     
-    result = "<h1>Все бронирования</h1>"
+    bookings_list = []
     for booking in bookings:
-        result += f"""
-        <div style="border:1px solid #ccc; padding:10px; margin:5px;">
-            <p><strong>{booking['first_name']} {booking['last_name']}</strong></p>
-            <p>Тип номера: {booking['room_type_name']}</p>
-            <p>Дата заезда: {booking['desired_check_in_date']}</p>
-            <p>Статус: {booking['status']}</p>
-            <p>Номер: {booking['room_number'] or 'Не назначен'}</p>
-            <a href="/admin/booking/{booking['id']}">Управление</a>
-        </div>
-        """
+        bookings_list.append({
+            "id": booking["id"],
+            "guest_username": booking["username"],
+            "guest_email": booking["email"],
+            "first_name": booking["first_name"],
+            "last_name": booking["last_name"],
+            "passport": booking["passport"],
+            "phone": booking["phone"],
+            "room_type": booking["room_type_name"],
+            "check_in_date": booking["check_in_date"],
+            "check_out_date": booking["check_out_date"],
+            "status": booking["status"],
+            "room_number": booking["room_number"],
+            "total_price": booking["total_price"]
+        })
     
-    return result + '<br><a href="/admin">Назад</a>'
-
-@app.route("/admin/booking/<int:booking_id>")
-@admin_required
-def admin_booking_detail(booking_id):
-    conn = get_db()
-    cur = conn.cursor()
-    
-    cur.execute("""
-        SELECT 
-            b.*,
-            g.first_name, g.last_name, g.phone, g.email, g.passport,
-            rt.name as room_type_name, rt.base_price_per_night
-        FROM booking b
-        JOIN guest g ON b.guest_id = g.id
-        JOIN room_type rt ON b.room_type_id = rt.id
-        WHERE b.id = ?
-    """, (booking_id,))
-    booking = cur.fetchone()
-    
-    cur.execute("""
-        SELECT r.* FROM room r
-        WHERE r.room_type_id = ? 
-        AND r.is_active = 1
-    """, (booking["room_type_id"],))
-    available_rooms = cur.fetchall()
-    
-    conn.close()
-    
-    rooms_options = "".join([f'<option value="{r["id"]}">{r["room_number"]}</option>' for r in available_rooms])
-    
-    return f'''
-    <h1>Управление бронированием</h1>
-    <p>Гость: {booking['first_name']} {booking['last_name']}</p>
-    <p>Паспорт: {booking['passport']}</p>
-    <p>Телефон: {booking['phone']}</p>
-    <p>Тип номера: {booking['room_type_name']}</p>
-    <p>Дата заезда: {booking['desired_check_in_date']}</p>
-    <p>Статус: {booking['status']}</p>
-    
-    <form action="/admin/booking/{booking_id}" method="POST">
-        <select name="room_id">
-            <option value="">Выберите номер</option>
-            {rooms_options}
-        </select>
-        <button type="submit" name="action" value="assign_room">Назначить номер</button>
-    </form>
-    
-    <form action="/admin/booking/{booking_id}" method="POST">
-        <select name="status">
-            <option value="pending">Ожидание</option>
-            <option value="confirmed">Подтверждено</option>
-            <option value="checked-in">Заселен</option>
-            <option value="checked-out">Выселен</option>
-            <option value="cancelled">Отменено</option>
-        </select>
-        <button type="submit" name="action" value="update_status">Изменить статус</button>
-    </form>
-    
-    <a href="/admin/bookings">Назад</a>
-    '''
-
-@app.route("/admin/booking/<int:booking_id>", methods=["POST"])
-@admin_required
-def admin_booking_update(booking_id):
-    action = request.form["action"]
-    conn = get_db()
-    cur = conn.cursor()
-    
-    if action == "assign_room":
-        room_id = request.form["room_id"]
-        if room_id:
-            cur.execute("UPDATE booking SET assigned_room_id = ?, status = 'confirmed' WHERE id = ?", 
-                       (room_id, booking_id))
-            conn.commit()
-    
-    elif action == "update_status":
-        new_status = request.form["status"]
-        cur.execute("UPDATE booking SET status = ? WHERE id = ?", (new_status, booking_id))
-        conn.commit()
-    
-    conn.close()
-    return redirect(f"/admin/booking/{booking_id}")
+    return jsonify({"bookings": bookings_list})
 
 @app.route("/admin/rooms")
 @admin_required
@@ -453,22 +441,21 @@ def admin_rooms():
     
     conn.close()
     
-    result = "<h1>Все номера</h1>"
+    rooms_list = []
     for room in rooms:
-        result += f"""
-        <div style="border:1px solid #ccc; padding:10px; margin:5px;">
-            <p><strong>Номер {room['room_number']}</strong></p>
-            <p>Тип: {room['room_type_name']}</p>
-            <p>Цена за ночь: {room['base_price_per_night']} руб.</p>
-            <p>WiFi: {'Да' if room['has_wifi'] else 'Нет'}</p>
-            <p>TV: {'Да' if room['has_tv'] else 'Нет'}</p>
-            <p>Статус: {'Активен' if room['is_active'] else 'Неактивен'}</p>
-        </div>
-        """
+        rooms_list.append({
+            "id": room["id"],
+            "room_number": room["room_number"],
+            "room_type": room["room_type_name"],
+            "base_price": room["base_price_per_night"],
+            "has_wifi": bool(room["has_wifi"]),
+            "has_tv": bool(room["has_tv"]),
+            "is_active": bool(room["is_active"])
+        })
     
-    return result + '<br><a href="/admin">Назад</a>'
+    return jsonify({"rooms": rooms_list})
 
-@app.route("/debug-tables")
+@app.route("/debug/tables")
 def debug_tables():
     conn = get_db()
     cur = conn.cursor()
@@ -476,23 +463,17 @@ def debug_tables():
     cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
     tables = cur.fetchall()
     
-    result = "<h1>Таблицы в БД:</h1><ul>"
+    tables_info = {}
     for table in tables:
         table_name = table[0]
-        result += f"<li><b>{table_name}</b></li>"
-        
         cur.execute(f"PRAGMA table_info({table_name})")
         columns = cur.fetchall()
         
-        result += "<ul>"
-        for column in columns:
-            result += f"<li>{column[1]} ({column[2]})</li>"
-        result += "</ul>"
-        
-    result += "</ul>"
+        tables_info[table_name] = [{"name": col[1], "type": col[2]} for col in columns]
+    
     conn.close()
-    return result
+    return jsonify({"tables": tables_info})
 
 if __name__ == "__main__":
     init_db()
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
