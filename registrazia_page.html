@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Гостиница L&N — Регистрация</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
-  <a href="important_page.html"></a>
   <style>
     * {
       box-sizing: border-box;
@@ -79,7 +78,6 @@
 
     .image-side {
       width: 400px;
-      height: auto;
       background-image: url('орхидея.jpg');
       background-size: cover;
       background-position: center;
@@ -114,7 +112,6 @@
       transition: background-color 0.3s ease;
       align-self: center;
       margin-top: 20px;
-      
     }
 
     .register-button:hover {
@@ -133,7 +130,7 @@
 
     .auth-title-box {
       background-color: #FFBBCE;
-      border-radius: 20px;
+      border-radius: 60px;
       padding: 15px;
       text-align: center;
       font-size: 28px;
@@ -142,12 +139,10 @@
       color: #4C3B3B;
       margin-bottom: 20px;
       border: 1px solid rgba(76, 59, 59, 0.7);
-      border-radius: 60px; /* более округлый */ 
-      align-items: center; 
-      max-width: 400px;       /* ограничивает ширину блока */
-      width: 100%;            /* позволяет адаптироваться */
-      margin-left: auto;      /* центрирует слева */
-      margin-right: auto;      
+      max-width: 400px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     label {
@@ -167,8 +162,16 @@
       width: 100%;
     }
 
-    .form-button {
-      margin-top: 20px;
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .form-button,
+    .admin-button {
       padding: 12px 24px;
       background-color: #FFBBCE;
       color: #4C3B3B;
@@ -180,14 +183,14 @@
       font-family: 'Playfair Display', serif;
       cursor: pointer;
       transition: background-color 0.3s ease;
-      max-width: 300px;       /* ограничивает ширину блока */
-      width: 100%;            /* позволяет адаптироваться */
-      margin-left: auto;      /* центрирует слева */
-      margin-right: auto; 
-      align-self: center;
+      max-width: 300px;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
     }
 
-    .form-button:hover {
+    .form-button:hover,
+    .admin-button:hover {
       background-color: #d48fa3;
     }
 
@@ -222,21 +225,20 @@
 
   <header>
     <div class="logo">
-      <a href="important_page.html" style="color: #4C3B3B;">Гостиница L&N</a>
+      <a href="important_page.html">Гостиница L&N</a>
     </div>
     <nav class="nav">
-      <a href="booking.html" class="nav-item">
+      <a href="info_booking.html" class="nav-item">
         <img src="бронирование.jpg" alt="Бронирование"> Бронирование
       </a>
       <a href="info_o_nas.html" class="nav-item">
         <img src="онас.jpg" alt="О нас"> О нас
       </a>
       <a href="avtorizacia_page.html" class="nav-item">
-        <img src="войти.jpg" alt="Войти"> 
+        <img src="войти.jpg" alt="Войти"> Войти
       </a>
-      Войти
-      <a href="info.html" class="nav-item">
-        <img src="инфа.jpg" alt="Информация">
+      <a href="reviews.html" class="nav-item">
+        <img src="отзывы.jpg" alt="Отзывы">
       </a>
     </nav>
   </header>
@@ -244,7 +246,9 @@
   <div class="auth-wrapper">
     <div class="image-side">
       <div class="overlay-text">Уже есть аккаунт?</div>
-      <button class="register-button"><a href="avtorizacia_page.html" style="color: #4C3B3B;">Войти</a></button>
+      <button class="register-button">
+        <a href="avtorizacia_page.html" style="color: #4C3B3B; text-decoration: none;">Войти</a>
+      </button>
     </div>
 
     <div class="form-side">
@@ -259,10 +263,15 @@
       <label for="password">Пароль:</label>
       <input type="password" id="password" name="password" placeholder="Введите пароль">
 
-      <label for="password">Повторите пароль:</label>
-      <input type="password" id="password" name="password" placeholder="Введите пароль">
+      <label for="confirm-password">Повторите пароль:</label>
+      <input type="password" id="confirm-password" name="confirm-password" placeholder="Введите пароль повторно">
 
-      <button class="form-button">Зарегистрироваться</button>
+      <div class="button-group">
+<form action="{{ url_for('registrazia_page') }}" method="get">
+        <button type="submit" class="form-button">Зарегистрироваться</button>
+      </form>
+        <a href="avtorizacia_admin.html" class="admin-button">Войти как администратор</a>
+      </div>
     </div>
   </div>
 

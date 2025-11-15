@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Гостиница L&N</title>
+  <title>Гостиница L&N Админ</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
   <style>
     * {
@@ -58,7 +58,7 @@
 
     main {
       display: flex;
-      justify-content: center; /* Центрируем карточки */
+      justify-content: space-between;
       margin: 40px;
       gap: 30px;
       flex-wrap: wrap;
@@ -69,7 +69,6 @@
       border-radius: 40px;
       padding: 40px 30px;
       width: 30%;
-      min-width: 280px;
       height: 500px;
       box-shadow: 0 0 10px rgba(76, 59, 59, 0.2);
       border: 1px solid rgba(76, 59, 59, 0.7);
@@ -94,7 +93,7 @@
       background-color: #FFBBCE;
       border-radius: 30px;
       padding: 30px;
-      height: 300px;
+      height: 300px; /* Увеличенная длина внутреннего блока */
       border: 1px solid rgba(76, 59, 59, 0.7);
       display: flex;
       align-items: center;
@@ -132,19 +131,27 @@
     <div class="logo">Гостиница L&N</div>
     <nav class="nav">
       <div class="nav-item">
-        <a href="info_booking.html"><img src="бронирование.jpg" alt="Бронирование"></a>
+        <a href="info_booking_admin.html">
+          <img src="бронирование.jpg" alt="Бронирование">
+        </a>
         Бронирование
       </div>
       <div class="nav-item">
-        <a href="info_o_nas.html"><img src="онас.jpg" alt="О нас"></a>
+        <a href="o_nas_admin.html">
+          <img src="онас.jpg" alt="О нас">
+        </a>
         О нас
       </div>
       <div class="nav-item">
-        <a href="avtorizacia_page.html"><img src="войти.jpg" alt="Войти"></a>
+         <a href="avtorizacia_page.html">
+           <img src="войти.jpg" alt="Войти"> 
+        </a> 
         Войти
       </div>
       <div class="nav-item">
-        <a href="reviews.html"><img src="отзывы.jpg" alt="Отзывы"></a>
+        <a href="basa_dannix.html">
+          <img src="инфа.jpg" alt="Информация">
+        </a>
       </div>
     </nav>
   </header>
@@ -154,9 +161,9 @@
       <div class="card-title">Номера</div>
       <div class="inner-block">
         <p>
-          <a href="ekonom_room.html" style="color: #4C3B3B;">Экономный</a><br><br>
-          <a href="standart_room.html" style="color: #4C3B3B;">Стандартный</a><br><br>
-          <a href="lux_room.html" style="color: #4C3B3B;">Люксовый</a>
+          <a href="ekonom_admin.html" style="color: #4C3B3B;">Экономный</a><br><br>
+          <a href="standart_admin.html" style="color: #4C3B3B;">Стандартный</a><br><br>
+          <a href="lux_admin.html" style="color: #4C3B3B;">Люксовый</a>
         </p>
       </div>
     </div>
@@ -165,9 +172,17 @@
       <div class="card-title">Бронирование</div>
       <div class="inner-block">
         <p>
-          <a href="booking_process.html" style="color: #4C3B3B;">
-            Чтобы забронировать номер, необходимо оставить заявку за 2 недели.
-          </a>
+           <a href="booking_admin.html" style="color: #4C3B3B;"> Чтобы забронировать номер, необходимо оставить заявку за 2 недели.</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Отчеты</div>
+      <div class="inner-block">
+        <p>
+          <a href="report_1.html" style="color: #4C3B3B;">За указанный период</a><br><br>
+          <a href="report_2.html" style="color: #4C3B3B;">Свободные номера на указанную дату</a>
         </p>
       </div>
     </div>
