@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Гостиница L&N — Номер "Стандартный"</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+  <a href="important_page.html"></a>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Playfair Display', serif;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+    }
+
+    header {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      margin: 20px;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    .logo {
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .nav {
+      display: flex;
+      gap: 40px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-style: italic;
+      font-weight: 600;
+      text-decoration: none;
+      color: #4C3B3B;
+    }
+
+    .nav-item img {
+      width: 33px;
+      height: 33px;
+      border-radius: 50%;
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      margin: 40px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      padding: 40px 30px;
+      width: 90%;
+      max-width: 1400px;
+      box-shadow: 0 0 10px rgba(76, 59, 59, 0.2);
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-block {
+      flex: 1 1 400px;
+    }
+
+    .photo-block img {
+      width: 100%;
+      border-radius: 30px;
+      border: 1px solid rgba(76, 59, 59, 0.5);
+    }
+
+    .text-block {
+      flex: 1 1 500px;
+      background-color: #FFBBCE;
+      border-radius: 30px;
+      padding: 30px;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    .text-block h1 {
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .text-block p {
+      font-size: 18px;
+      line-height: 1.8;
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+.order-button {
+  display: block;
+  margin: 0 auto;
+  padding: 12px 24px;
+  background-color: #E3A6B6;
+  color: #4C3B3B;
+  border: 1px solid rgba(76, 59, 59, 0.5);
+  border-radius: 30px;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: bold; /* ← делает текст жирным */
+  font-family: 'Playfair Display', serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+    .order-button:hover {
+      background-color: #E3A6B6;
+    }
+
+    @media (max-width: 900px) {
+      .card {
+        flex-direction: column;
+      }
+
+      .photo-block, .text-block {
+        width: 100%;
+      }
+
+      .nav {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo"><a href="important_page.html" style="color: #4C3B3B;">Гостиница L&N</a></div>
+    <nav class="nav">
+      <div class="nav-item">
+        <a href="info_booking.html"><img src="бронирование.jpg" alt="Бронирование"></a> Бронирование
+      </div>
+      <div class="nav-item">
+        <a href="info_o_nas.html">
+          <img src="онас.jpg" alt="О нас">
+        </a> О нас
+      </div>
+      <div class="nav-item">
+         <a href="avtorizacia_page.html">
+           <img src="войти.jpg" alt="Войти"> 
+        </a> 
+         Войти
+      </div>
+      <div class="nav-item">
+        <a href="reviews.html"><img src="отзывы.jpg" alt="Отзывы"></a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="photo-block">
+        <img src="стандартный_номер.png" alt="Номер Стандартный">
+      </div>
+      <div class="text-block">
+        <h1>Номер "Стандартный"</h1>
+        <p>
+          Добро пожаловать в номер категории "Стандартный" - идеальное сочетание комфорта, стиля и функциональности. Просторный номер с удобной кроватью, рабочей зоной, телевизором, холодильником из индивидуальным санузлом обеспечит вам приятное пребывание. Он подойдёт как для деловых поездок, так и для отдыха. Здесь все продумано для вашего удобства - от интерьера до мелочей. Стандарт - это комфорт, который вы заслуживаете.
+        </p>
+        <a href="booking_process.html" style="color: #4C3B3B;"><button class="order-button">Оформить заказ</button></a>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

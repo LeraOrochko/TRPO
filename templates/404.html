@@ -1,0 +1,55 @@
+<!-- templates/404.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Страница не найдена</title>
+    <style>
+        body {
+            font-family: 'Playfair Display', serif;
+            background-color: #FFBBCE;
+            color: #4C3B3B;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #E3A6B6;
+            border-radius: 40px;
+            padding: 40px;
+            border: 1px solid rgba(76, 59, 59, 0.7);
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+        .back-link {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: #FFBBCE;
+            border-radius: 30px;
+            text-decoration: none;
+            color: #4C3B3B;
+            border: 1px solid rgba(76, 59, 59, 0.5);
+            font-weight: bold;
+        }
+        .back-link:hover {
+            background-color: #E3A6B6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>404</h1>
+        <p>Извините, запрашиваемая страница не найдена.</p>
+        <p>Возможно, она была перемещена или удалена.</p>
+        <a href="/" class="back-link">Вернуться на главную</a>
+    </div>
+</body>
+</html>

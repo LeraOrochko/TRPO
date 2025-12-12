@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Гостиница L&N — Бронирование</title>
+
+  <!-- Подключаем декоративный шрифт -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Общие стили и сброс отступов */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Основной фон и шрифт */
+    body {
+      font-family: 'Playfair Display', serif;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+    }
+
+    /* Шапка сайта */
+    header {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      margin: 20px;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    /* Логотип */
+    .logo {
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    /* Навигационное меню */
+    .nav {
+      display: flex;
+      gap: 40px;
+    }
+
+    /* Пункты меню */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-style: italic;
+      font-weight: 600;
+      text-decoration: none;
+      color: #4C3B3B;
+    }
+
+    /* Иконки в меню */
+    .nav-item img {
+      width: 33px;
+      height: 33px;
+      border-radius: 50%;
+    }
+
+    /* Основная компоновка: форма + картинка */
+    .booking-layout {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
+      margin: 40px;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    /* Обёртка формы бронирования */
+    .booking-wrapper {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      padding: 40px;
+      width: 100%;
+      max-width: 700px;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      box-shadow: 0 0 10px rgba(76, 59, 59, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      position: relative;
+      z-index: 2; /* форма поверх картинки */
+    }
+
+    /* Заголовок формы */
+    .booking-title {
+      background-color: #FFBBCE;
+      border-radius: 30px;
+      padding: 15px 20px;
+      font-size: 28px;
+      font-style: italic;
+      font-weight: 600;
+      text-align: center;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    /* Стили для подписей к полям */
+    .booking-block label {
+      font-size: 18px;
+      font-style: italic;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    /* Стили для всех полей ввода */
+    input[type="date"],
+    input[type="text"],
+    input[type="tel"],
+    select {
+      width: 100%;
+      padding: 10px 15px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border-radius: 20px;
+      border: 1px solid rgba(76, 59, 59, 0.5);
+      font-size: 16px;
+      font-family: 'Playfair Display', serif;
+      background-color: #fff;
+      color: #4C3B3B;
+    }
+
+    /* Контейнер для чекбокса */
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      font-size: 16px;
+      font-style: italic;
+    }
+
+    /* Кнопка отправки формы */
+    .submit-button {
+      margin-top: 30px;
+      padding: 12px 24px;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      border-radius: 30px;
+      font-size: 16px;
+      font-style: italic;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+    }
+
+    .submit-button:hover {
+      background-color: #f3a9c0;
+    }
+
+    /* Блок с фоновым изображением */
+.image-side {
+  width: 100%;
+  max-width: 582px; /* как у .booking-wrapper */
+  background-image: url('roo.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 40px;
+  margin-right: 0; /* убираем сдвиг */
+  position: relative; /* исправлено с 'center' */
+  z-index: 0;
+  display: flex;
+  align-items: stretch; /* растягиваем вложенный блок */
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(76, 59, 59, 0.7);
+  height: auto; /* пусть растягивается по содержимому */
+}
+
+
+    /* Вложенный блок с изображением */
+    .inner-photo-box {
+      padding: 0;
+      border-radius: 30px;
+      max-width: 90%;
+    }
+
+    /* Картинка внутри блока */
+    .inner-photo-box img {
+      width: 100%;
+      border-radius: 20px;
+      display: block;
+    }
+
+    /* Адаптация для мобильных устройств */
+    @media (max-width: 900px) {
+      header {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .nav {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .booking-layout {
+        flex-direction: column;
+        margin: 20px;
+      }
+
+      .image-side {
+        width: 100%;
+        height: 300px;
+        margin-right: 0;
+      }
+
+      .booking-wrapper {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Шапка сайта -->
+  <header>
+   <div class="logo"><a href="{{ url_for('index') }}" style="color: #4C3B3B;">Гостиница L&N</a></div>
+    <nav class="nav">
+      <!-- Пункты меню -->
+      <div class="nav-item"><a href="info_booking.html"><img src="бронирование.jpg" alt="Бронирование"></a> Бронирование</div>
+      <div class="nav-item"><a href="info_o_nas.html"><img src="онас.jpg" alt="О нас"></a> О нас</div>
+      <div class="nav-item"><a href="avtorizacia_page.html"><img src="войти.jpg" alt="Войти"></a> Войти</div>
+      <div class="nav-item"><a href="reviews.html"><img src="отзывы.jpg" alt="Отзывы"></a></div>
+    </nav>
+  </header>
+
+  <!-- Основная компоновка: форма + картинка -->
+  <div class="booking-layout">
+
+    <!-- Форма бронирования -->
+    <div class="booking-wrapper">
+      <div class="booking-title">Бронирование</div>
+
+      <div class="booking-block">
+        <!-- Поле ФИО -->
+        <label for="fullname">Введите ФИО:</label>
+        <input type="text" id="fullname" name="fullname" placeholder="Фамилия Имя Отчество">
+
+        <!-- Поле паспорта -->
+        <label for="passport">Введите серию паспорта:</label>
+        <input type="text" id="passport" name="passport" placeholder="AB1234567">
+
+        <!-- Поле телефона -->
+        <label for="phone">Введите номер телефона:</label>
+        <input type="tel" id="phone" name="phone" placeholder="+375 (__) ___-__-__">
+
+        <!-- Выбор типа номера -->
+        <label for="room-type">Выберите тип номера:</label>
+        <select id="room-type" name="room-type">
+          <option value="">-- Выберите --</option>
+          <option value="Экономный">Экономный</option>
+          <option value="Стандартный">Стандартный</option>
+          <option value="Люксовый">Люксовый</option>
+        </select>
+
+        <!--  Дата заезда -->
+        <label for="arrival">Выберите дату заезда:</label>
+        <input type="date" id="arrival" name="arrival">
+
+        <!--  Дата выезда -->
+        <label for="departure">Выберите дату выезда:</label>
+        <input type="date" id="departure" name="departure">
+
+        <!--  Согласие на обработку данных -->
+        <div class="checkbox-container">
+          <input type="checkbox" id="consent" name="consent">
+          <label for="consent">Я согласен с обработкой персональных данных</label>
+        </div>
+
+        <!-- Кнопка отправки -->
+        <button class="submit-button">Оформить заказ</button>
+      </div>
+    </div>
+
+    <!--  Блок с фоновым изображением -->
+    <div class="image-side">
+      <div class="inner-photo-box">
+        <img src="roo.png" alt="Декоративное фото">
+      </div>
+    </div>
+
+  </div> <!--  Закрытие booking-layout -->
+
+</body>
+</html>

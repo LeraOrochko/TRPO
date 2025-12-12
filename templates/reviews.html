@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Гостиница L&N — Отзывы</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Playfair Display', serif;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+    }
+
+    header {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      margin: 20px;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    .logo {
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .nav {
+      display: flex;
+      gap: 40px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-style: italic;
+      font-weight: 600;
+      text-decoration: none;
+      color: #4C3B3B;
+    }
+
+    .nav-item img {
+      width: 33px;
+      height: 33px;
+      border-radius: 50%;
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      margin: 40px;
+    }
+
+    .review-card {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      padding: 40px;
+      width: 100%;
+      max-width: 700px;
+      box-shadow: 0 0 10px rgba(76, 59, 59, 0.2);
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .review-title {
+      background-color: #FFBBCE;
+      border-radius: 30px;
+      padding: 20px;
+      font-size: 24px;
+      font-style: italic;
+      font-weight: 600;
+      text-align: center;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    .review-description {
+      font-size: 18px;
+      font-style: italic;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    label {
+      font-size: 18px;
+      font-style: italic;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 15px;
+      border-radius: 20px;
+      border: 1px solid rgba(76, 59, 59, 0.5);
+      font-size: 16px;
+      font-family: 'Playfair Display', serif;
+      background-color: #fff;
+      color: #4C3B3B;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      resize: vertical;
+      height: 150px;
+    }
+
+    .submit-button {
+      padding: 12px 24px;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      border-radius: 30px;
+      font-size: 16px;
+      font-style: italic;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      align-self: center;
+    }
+
+    .submit-button:hover {
+      background-color: #f3a9c0;
+    }
+
+    @media (max-width: 900px) {
+      .nav {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .review-card {
+        width: 90%;
+        padding: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo"><a href="important_page.html" style="color: #4C3B3B;">Гостиница L&N</a></div>
+    <nav class="nav">
+      <div class="nav-item">
+        <a href="info_booking.html"><img src="бронирование.jpg" alt="Бронирование"></a>
+        Бронирование
+      </div>
+      <div class="nav-item">
+        <a href="info_o_nas.html"><img src="онас.jpg" alt="О нас"></a>
+        О нас
+      </div>
+      <div class="nav-item">
+        <a href="avtorizacia_page.html"><img src="войти.jpg" alt="Войти"></a>
+        Войти
+      </div>
+        <div>
+          <a href="reviews.html" class="nav-item">
+        <img src="отзывы.jpg" alt="Отзывы">
+      </a>
+        </div>  
+    </nav>
+  </header>
+
+  <main>
+    <div class="review-card">
+      <div class="review-title">Отзывы</div>
+      <div class="review-description">
+        Благодарим Вас, что вы выбрали гостиницу L&N! При возможности, оставьте нам ваш отзыв.
+      </div>
+
+      <form>
+        <label for="stars">Количество звёзд (1–5):</label>
+        <input type="number" id="stars" name="stars" min="1" max="5" placeholder="Введите число от 1 до 5">
+
+        <label for="review">Оставьте здесь свой отзыв:</label>
+        <textarea id="review" name="review" placeholder="Напишите ваш отзыв..."></textarea>
+
+        <button type="submit" class="submit-button">Отправить отзыв</button>
+      </form>
+    </div>
+  </main>
+
+</body>
+</html>

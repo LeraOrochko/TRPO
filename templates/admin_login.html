@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Гостиница L&N — Вход администратора</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Playfair Display', serif; background-color: #FFBBCE; color: #4C3B3B; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .container { background-color: #E3A6B6; padding: 40px; border-radius: 40px; width: 400px; box-shadow: 0 0 20px rgba(76, 59, 59, 0.3); }
+    h1 { text-align: center; margin-bottom: 30px; font-style: italic; }
+    input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 20px; border: 1px solid rgba(76, 59, 59, 0.5); font-family: 'Playfair Display', serif; }
+    button { background-color: #FFBBCE; cursor: pointer; font-weight: 600; }
+    .message { padding: 10px; border-radius: 20px; margin: 10px 0; text-align: center; }
+    .error { background-color: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Вход администратора</h1>
+    
+    {% if message %}
+    <div class="message error">{{ message }}</div>
+    {% endif %}
+    
+    <form action="/admin/login_form" method="POST">
+      <input type="text" name="username" placeholder="Логин" required>
+      <input type="password" name="password" placeholder="Пароль" required>
+      <button type="submit">Войти</button>
+    </form>
+    
+    <p style="text-align: center; margin-top: 20px;">
+      <a href="/" style="color: #4C3B3B;">На главную</a>
+    </p>
+  </div>
+</body>
+</html>
