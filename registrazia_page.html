@@ -250,8 +250,8 @@
         <a href="avtorizacia_page.html" style="color: #4C3B3B; text-decoration: none;">Войти</a>
       </button>
     </div>
-
-    <div class="form-side">
+<form action="{{ url_for('registrazia_page') }}" method="get">
+  <div class="form-side">
       <div class="auth-title-box">Регистрация</div>
 
       <label for="username">Логин:</label>
@@ -267,7 +267,6 @@
       <input type="password" id="confirm-password" name="confirm-password" placeholder="Введите пароль повторно">
 
       <div class="button-group">
-<form action="{{ url_for('registrazia_page') }}" method="get">
         <button type="submit" class="form-button">Зарегистрироваться</button>
       </form>
         <a href="avtorizacia_admin.html" class="admin-button">Войти как администратор</a>
