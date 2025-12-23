@@ -48,7 +48,7 @@ def create_missing_images():
         os.makedirs(images_dir)
         print(f"✅ Создана папка: {images_dir}")
     
-    images = ['booking.jpg', 'about.jpg', 'login.jpg', 'reviews.jpg', 'orchid.jpg', 'info.jpg', 'favicon.ico']
+    images = ['booking.jpg', 'about.jpg', 'login.jpg', 'reviews.jpg', 'orchid.jpg', 'info.jpg', 'favicon.ico','econom.jpg', 'standart.jpg', 'lux.jpg']
     
     for filename in images:
         filepath = os.path.join(images_dir, filename)
@@ -321,6 +321,13 @@ def avtorizacia_page():
             
             print("Успех! Редирект на главную...")
             flash("Вы успешно вошли в систему!", "success")
+            
+            # Если был сохранен next_url (например, из booking_process), редиректим туда
+            next_url = session.pop("next_url", None)
+            if next_url:
+                print(f"Редирект на сохраненный URL: {next_url}")
+                return redirect(next_url)
+            
             return redirect(url_for("index"))
             
         except Exception as e:
@@ -332,209 +339,44 @@ def avtorizacia_page():
         finally:
             if conn:
                 conn.close()
-    else:
-        print("GET запрос на страницу авторизации")
     
+    # GET запрос
+    print("GET запрос на страницу авторизации")
     return render_template("avtorizacia_page.html")
-    """Страница авторизации пользователя"""
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        
-        print(f"=== ДЕБАГ АВТОРИЗАЦИИ ===")
-        print(f"Логин из формы: '{username}'")
-        print(f"Пароль из формы: '{password}'")
-        
-        if not username or not password:
-            print("Ошибка: пустой логин или пароль")
-            flash("Логин и пароль обязательны", "error")
-            return render_template("avtorizacia_page.html")
-        
-        conn = None
-        try:
-            conn = get_db()
-            cur = conn.cursor()
-            
-            print(f"Ищу пользователя '{username}' в БД...")
-            cur.execute("SELECT * FROM guests WHERE username = ?", (username,))
-            guest = cur.fetchone()
-            
-            if not guest:
-                print(f"Пользователь '{username}' не найден в БД")
-                flash("Пользователь не найден", "error")
-                return render_template("avtorizacia_page.html")
-            
-            print(f"Пользователь найден: ID={guest['id']}, логин={guest['username']}")
-            print(f"Пароль из БД (хэш): {guest['password_hash']}")
-            
-            # Хэшируем введенный пароль
-            input_hash = hash_password(password)
-            print(f"Введенный пароль (хэш): {input_hash}")
-            
-            if guest["password_hash"] != input_hash:
-                print("Пароли не совпадают!")
-                flash("Неверный пароль", "error")
-                return render_template("avtorizacia_page.html")
-            
-            print("Пароль верный! Устанавливаю сессию...")
-            
-            # Устанавливаем сессию
-            session["guest_id"] = guest["id"]
-            session["guest_username"] = guest["username"]
-            session["guest_email"] = guest["email"]
-            
-            print(f"Сессия установлена: guest_id={session['guest_id']}")
-            
-            # Обновляем время последнего входа
-            cur.execute(
-                "UPDATE guests SET last_login = CURRENT_TIMESTAMP WHERE id = ?",
-                (guest["id"],)
-            )
-            conn.commit()
-            
-            print("Успех! Редирект на главную...")
-            flash("Вы успешно вошли в систему!", "success")
-            return redirect(url_for("index"))
-            
-        except Exception as e:
-            print(f"❌ КРИТИЧЕСКАЯ ОШИБКА: {str(e)}")
-            import traceback
-            traceback.print_exc()
-            flash(f"Ошибка при авторизации: {str(e)}", "error")
-            return render_template("avtorizacia_page.html")
-        finally:
-            if conn:
-                conn.close()
-    else:
-        print("GET запрос на страницу авторизации")
-    
-    return render_template("avtorizacia_page.html")
-    """Страница авторизации пользователя"""
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        
-        if not username or not password:
-            flash("Логин и пароль обязательны", "error")
-            return render_template("avtorizacia_page.html")
-        
-        conn = None
-        try:
-            conn = get_db()
-            cur = conn.cursor()
-            
-            cur.execute("SELECT * FROM guests WHERE username = ?", (username,))
-            guest = cur.fetchone()
-            
-            if not guest:
-                flash("Пользователь не найден", "error")
-                return render_template("avtorizacia_page.html")
-            
-            # Сравниваем хэши паролей
-            input_password_hash = hash_password(password)
-            if guest["password_hash"] != input_password_hash:
-                flash("Неверный пароль", "error")
-                return render_template("avtorizacia_page.html")
-            
-            session["guest_id"] = guest["id"]
-            session["guest_username"] = guest["username"]
-            session["guest_email"] = guest["email"]
-            
-            cur.execute(
-                "UPDATE guests SET last_login = CURRENT_TIMESTAMP WHERE id = ?",
-                (guest["id"],)
-            )
-            conn.commit()
-            
-            # Сообщение об успешном входе
-            flash("Вы успешно вошли в систему!", "success")
-            
-            # Редирект на главную страницу
-            return redirect(url_for("index"))
-            
-        except Exception as e:
-            print(f"Ошибка авторизации: {str(e)}")
-            flash(f"Ошибка при авторизации: {str(e)}", "error")
-            return render_template("avtorizacia_page.html")
-        finally:
-            if conn:
-                conn.close()
-    
-    return render_template("avtorizacia_page.html")
-    """Страница авторизации пользователя"""
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        
-        if not username or not password:
-            flash("Логин и пароль обязательны", "error")
-            return render_template("avtorizacia_page.html")
-        
-        conn = None
-        try:
-            conn = get_db()
-            cur = conn.cursor()
-            
-            cur.execute("SELECT * FROM guests WHERE username = ?", (username,))
-            guest = cur.fetchone()
-            
-            if not guest:
-                flash("Пользователь не найден", "error")
-                return render_template("avtorizacia_page.html")
-            
-            if guest["password_hash"] != hash_password(password):
-                flash("Неверный пароль", "error")
-                return render_template("avtorizacia_page.html")
-            
-            session["guest_id"] = guest["id"]
-            session["guest_username"] = guest["username"]
-            session["guest_email"] = guest["email"]
-            
-            cur.execute(
-                "UPDATE guests SET last_login = CURRENT_TIMESTAMP WHERE id = ?",
-                (guest["id"],)
-            )
-            conn.commit()
-            
-            # Сообщение об успешном входе
-            flash("Вы успешно вошли в систему!", "success")
-            
-            # Редирект на главную страницу
-            return redirect(url_for("index"))
-            
-        except Exception as e:
-            print(f"Ошибка авторизации: {str(e)}")
-            flash(f"Ошибка при авторизации: {str(e)}", "error")
-            return render_template("avtorizacia_page.html")
-        finally:
-            if conn:
-                conn.close()
-    
-    return render_template("avtorizacia_page.html")
+
 
 @app.route("/registrazia_page", methods=["GET", "POST"])
 def registrazia_page():
     """Страница регистрации"""
     if request.method == "POST":
-        username = request.form.get("username")
-        email = request.form.get("email")
-        password = request.form.get("password")
-        confirm_password = request.form.get("confirm_password")
+        username = request.form.get("username", "").strip()
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+        confirm_password = request.form.get("confirm_password", "")
         
-        # Без сообщений об ошибках на сайте
-        errors = []
+        # Дебаг логирование
+        print(f"=== ДЕБАГ РЕГИСТРАЦИИ ===")
+        print(f"Логин: '{username}'")
+        print(f"Email: '{email}'")
+        print(f"Пароль длина: {len(password)}")
+        print(f"Подтверждение длина: {len(confirm_password)}")
         
-        if not all([username, email, password, confirm_password]):
-            errors.append("Все поля обязательны для заполнения")
+        # Проверка обязательных полей
+        if not username or not email or not password or not confirm_password:
+            print("Ошибка: не все поля заполнены")
+            flash("Все поля обязательны для заполнения", "error")
+            return render_template("registrazia_page.html")
         
+        # Проверка совпадения паролей
         if password != confirm_password:
-            errors.append("Пароли не совпадают")
+            print(f"Ошибка: пароли не совпадают. Пароль: '{password[:3]}...', Подтверждение: '{confirm_password[:3]}...'")
+            flash("Пароли не совпадают", "error")
+            return render_template("registrazia_page.html")
         
+        # Проверка длины пароля
         if len(password) < 6:
-            errors.append("Пароль должен быть не менее 6 символов")
-        
-        # Если есть ошибки - просто возвращаем
-        if errors:
+            print(f"Ошибка: пароль слишком короткий ({len(password)} символов)")
+            flash("Пароль должен быть не менее 6 символов", "error")
             return render_template("registrazia_page.html")
         
         conn = None
@@ -542,17 +384,31 @@ def registrazia_page():
             conn = get_db()
             cur = conn.cursor()
             
+            # Проверка существующего пользователя
             cur.execute("SELECT id FROM guests WHERE username = ?", (username,))
-            if cur.fetchone():
-                # Без сообщения об ошибке
+            existing_user = cur.fetchone()
+            if existing_user:
+                print(f"Ошибка: пользователь '{username}' уже существует")
+                flash(f"Пользователь с логином '{username}' уже существует", "error")
                 return render_template("registrazia_page.html")
             
+            # Проверка существующего email
             cur.execute("SELECT id FROM guests WHERE email = ?", (email,))
-            if cur.fetchone():
-                # Без сообщения об ошибке
+            existing_email = cur.fetchone()
+            if existing_email:
+                print(f"Ошибка: email '{email}' уже зарегистрирован")
+                flash(f"Пользователь с email '{email}' уже зарегистрирован", "error")
+                return render_template("registrazia_page.html")
+            
+            # Проверка валидности email
+            if '@' not in email or '.' not in email:
+                print(f"Ошибка: некорректный email '{email}'")
+                flash("Введите корректный email адрес", "error")
                 return render_template("registrazia_page.html")
             
             password_hash = hash_password(password)
+            
+            # Вставляем нового пользователя
             cur.execute(
                 "INSERT INTO guests (username, email, password_hash) VALUES (?, ?, ?)",
                 (username, email, password_hash)
@@ -561,22 +417,34 @@ def registrazia_page():
             guest_id = cur.lastrowid
             conn.commit()
             
+            print(f"✅ Успешная регистрация! ID: {guest_id}, Логин: {username}")
+            
+            # Устанавливаем сессию
             session["guest_id"] = guest_id
             session["guest_username"] = username
             session["guest_email"] = email
             
-            # Только успешное сообщение
             flash("Регистрация успешна! Вы вошли в систему.", "success")
             return redirect("/")
             
+        except sqlite3.Error as e:
+            print(f"❌ Ошибка SQLite при регистрации: {str(e)}")
+            if conn:
+                conn.rollback()
+            flash(f"Ошибка базы данных: {str(e)}", "error")
+            return render_template("registrazia_page.html")
         except Exception as e:
-            print(f"Ошибка регистрации: {str(e)}")
-            # Без сообщения об ошибке
+            print(f"❌ Общая ошибка при регистрации: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            flash(f"Ошибка при регистрации: {str(e)}", "error")
             return render_template("registrazia_page.html")
         finally:
             if conn:
                 conn.close()
     
+    # GET запрос - просто показываем форму
+    print("GET запрос на страницу регистрации")
     return render_template("registrazia_page.html")
 
 @app.route("/booking_process", methods=["GET", "POST"])
@@ -592,14 +460,24 @@ def booking_process():
         room_types = cur.fetchall()
         
         if request.method == "POST":
-            full_name = request.form.get("fullname")
-            passport = request.form.get("passport")
-            phone = request.form.get("phone")
-            room_type_name = request.form.get("room-type")
-            check_in_str = request.form.get("arrival")
-            check_out_str = request.form.get("departure")
+            full_name = request.form.get("fullname", "").strip()
+            passport = request.form.get("passport", "").strip()
+            phone = request.form.get("phone", "").strip()
+            room_type_name = request.form.get("room-type", "").strip()
+            check_in_str = request.form.get("arrival", "").strip()
+            check_out_str = request.form.get("departure", "").strip()
             consent = request.form.get("consent")
             
+            print(f"=== ДЕБАГ БРОНИРОВАНИЯ ===")
+            print(f"ФИО: {full_name}")
+            print(f"Паспорт: {passport}")
+            print(f"Телефон: {phone}")
+            print(f"Тип номера: {room_type_name}")
+            print(f"Дата заезда: {check_in_str}")
+            print(f"Дата выезда: {check_out_str}")
+            print(f"Согласие: {consent}")
+            
+            # Проверка заполнения всех полей
             if not all([full_name, passport, phone, room_type_name, check_in_str, check_out_str]):
                 flash("Пожалуйста, заполните все обязательные поля", "error")
                 return render_template("booking_process.html", room_types=room_types)
@@ -611,63 +489,198 @@ def booking_process():
             try:
                 check_in_date = datetime.datetime.strptime(check_in_str, "%Y-%m-%d")
                 check_out_date = datetime.datetime.strptime(check_out_str, "%Y-%m-%d")
+                current_date = datetime.datetime.now()
                 
+                # Проверка даты выезда
                 if check_out_date <= check_in_date:
                     flash("Дата выезда должна быть позже даты заезда", "error")
                     return render_template("booking_process.html", room_types=room_types)
                 
                 # Проверка на 2 недели
-                two_weeks_later = datetime.datetime.now() + timedelta(days=14)
+                two_weeks_later = current_date + timedelta(days=14)
                 if check_in_date <= two_weeks_later:
                     flash("Бронирование возможно только за 2 недели до заселения", "error")
                     return render_template("booking_process.html", room_types=room_types)
                 
-                # Проверка доступности номера
-                cur.execute("SELECT id, price_per_night, capacity FROM room_types WHERE name = ?", (room_type_name,))
+                # Проверка на будущие даты
+                if check_in_date < current_date:
+                    flash("Дата заезда не может быть в прошлом", "error")
+                    return render_template("booking_process.html", room_types=room_types)
+                
+                # Проверяем существование типа номера
+                cur.execute("SELECT id, name, price_per_night, capacity FROM room_types WHERE name = ?", (room_type_name,))
                 room_type = cur.fetchone()
                 
                 if not room_type:
-                    flash("Неверный тип номера", "error")
+                    flash(f"Тип номера '{room_type_name}' не найден", "error")
                     return render_template("booking_process.html", room_types=room_types)
                 
-                # Проверяем, занят ли номер на эти даты
+                print(f"Найден тип номера: ID={room_type['id']}, Название={room_type['name']}")
+                
+                # ============ ПРОВЕРКА 1: Бронирование уже существующего номера на эти даты ============
                 cur.execute('''
-                    SELECT COUNT(*) FROM bookings 
-                    WHERE room_type_id = ? 
-                    AND status IN ('pending', 'confirmed')
+                    SELECT COUNT(*) as count, 
+                           GROUP_CONCAT(DISTINCT b.check_in_date || ' - ' || b.check_out_date) as dates,
+                           GROUP_CONCAT(DISTINCT g.username) as users
+                    FROM bookings b
+                    JOIN guests g ON b.guest_id = g.id
+                    WHERE b.room_type_id = ? 
+                    AND b.status IN ('pending', 'confirmed')
                     AND (
-                        (check_in_date <= ? AND check_out_date >= ?) OR
-                        (check_in_date <= ? AND check_out_date >= ?) OR
-                        (check_in_date >= ? AND check_out_date <= ?)
+                        (b.check_in_date < ? AND b.check_out_date > ?) OR
+                        (b.check_in_date < ? AND b.check_out_date > ?) OR
+                        (b.check_in_date >= ? AND b.check_out_date <= ?)
                     )
-                ''', (room_type["id"], check_in_str, check_in_str, check_out_str, check_out_str, 
-                     check_in_str, check_out_str))
+                ''', (room_type["id"], check_out_str, check_in_str, 
+                      check_out_str, check_in_str, 
+                      check_in_str, check_out_str))
                 
-                occupied_count = cur.fetchone()[0]
+                booking_conflict = cur.fetchone()
+                conflict_count = booking_conflict["count"] if booking_conflict else 0
                 
-                if occupied_count > 0:
-                    # Находим альтернативные варианты
+                if conflict_count > 0:
+                    # Получаем информацию о конфликтах
+                    conflict_dates = booking_conflict["dates"] or ""
+                    conflict_users = booking_conflict["users"] or ""
+                    
+                    # Формируем подробное сообщение об ошибке
+                    error_msg = f"❌ Номер '{room_type_name}' уже забронирован на выбранные даты!"
+                    
+                    if conflict_dates:
+                        dates_list = conflict_dates.split(',')
+                        if dates_list:
+                            error_msg += f" Занятые периоды: {', '.join(dates_list[:3])}"
+                            if len(dates_list) > 3:
+                                error_msg += f" и еще {len(dates_list) - 3} период(ов)"
+                    
+                    if conflict_users:
+                        users_list = conflict_users.split(',')
+                        if users_list:
+                            error_msg += f" (забронировали: {', '.join(users_list[:2])})"
+                            if len(users_list) > 2:
+                                error_msg += f" и еще {len(users_list) - 2} пользователь(ей)"
+                    
+                    # Ищем альтернативные номера
                     cur.execute('''
                         SELECT * FROM room_types 
                         WHERE id != ? 
                         AND capacity >= ?
+                        AND id NOT IN (
+                            SELECT DISTINCT room_type_id 
+                            FROM bookings 
+                            WHERE status IN ('pending', 'confirmed')
+                            AND (
+                                (check_in_date < ? AND check_out_date > ?) OR
+                                (check_in_date < ? AND check_out_date > ?)
+                            )
+                        )
                         ORDER BY price_per_night
-                    ''', (room_type["id"], room_type["capacity"]))
+                        LIMIT 3
+                    ''', (room_type["id"], room_type["capacity"], 
+                          check_out_str, check_in_str, 
+                          check_out_str, check_in_str))
                     
                     alternatives = cur.fetchall()
                     
                     if alternatives:
-                        alt_text = "Доступны альтернативные номера: "
+                        alt_list = []
                         for alt in alternatives:
-                            alt_text += f"{alt['name']} ({alt['price_per_night']} руб./ночь), "
-                        flash(f"Этот номер занят на выбранные даты. {alt_text[:-2]}", "error")
+                            alt_list.append(f"{alt['name']} - {alt['price_per_night']} руб./ночь")
+                        error_msg += f"\n\n✅ Доступные альтернативы:\n" + "\n".join(alt_list)
                     else:
-                        flash("Этот номер занят на выбранные даты. Попробуйте другие даты.", "error")
+                        # Ищем любые свободные номера с подходящей вместимостью
+                        cur.execute('''
+                            SELECT * FROM room_types 
+                            WHERE capacity >= ?
+                            ORDER BY price_per_night
+                            LIMIT 3
+                        ''', (room_type["capacity"],))
+                        
+                        all_rooms = cur.fetchall()
+                        if all_rooms:
+                            room_list = []
+                            for room in all_rooms:
+                                # Проверяем доступность этого номера
+                                cur.execute('''
+                                    SELECT COUNT(*) FROM bookings 
+                                    WHERE room_type_id = ?
+                                    AND status IN ('pending', 'confirmed')
+                                    AND (
+                                        (check_in_date < ? AND check_out_date > ?) OR
+                                        (check_in_date < ? AND check_out_date > ?)
+                                    )
+                                ''', (room['id'], check_out_str, check_in_str, 
+                                      check_out_str, check_in_str))
+                                
+                                is_occupied = cur.fetchone()[0] > 0
+                                status = "❌ Занят" if is_occupied else "✅ Свободен"
+                                
+                                room_list.append(f"{room['name']} - {room['price_per_night']} руб. ({status})")
+                            
+                            error_msg += f"\n\n📋 Все номера этой категории:\n" + "\n".join(room_list)
                     
+                    flash(error_msg, "error")
                     return render_template("booking_process.html", room_types=room_types)
                 
+                # ============ ПРОВЕРКА 2: Бронирование этого же номера этим же пользователем ============
+                cur.execute('''
+                    SELECT COUNT(*) as count, 
+                           check_in_date, 
+                           check_out_date,
+                           status
+                    FROM bookings 
+                    WHERE guest_id = ?
+                    AND room_type_id = ?
+                    AND status IN ('pending', 'confirmed')
+                    AND (
+                        (check_in_date < ? AND check_out_date > ?) OR
+                        (check_in_date < ? AND check_out_date > ?)
+                    )
+                    LIMIT 1
+                ''', (session["guest_id"], room_type["id"], 
+                      check_out_str, check_in_str, 
+                      check_out_str, check_in_str))
+                
+                user_duplicate = cur.fetchone()
+                
+                if user_duplicate and user_duplicate["count"] > 0:
+                    flash(f"⚠️ У вас уже есть активное бронирование номера '{room_type_name}' "
+                          f"на период {user_duplicate['check_in_date']} - {user_duplicate['check_out_date']} "
+                          f"(статус: {user_duplicate['status']}).", "warning")
+                    return render_template("booking_process.html", room_types=room_types)
+                
+                # ============ ПРОВЕРКА 3: Бронирование любого номера на эти даты этим пользователем ============
+                cur.execute('''
+                    SELECT COUNT(*) as count, 
+                           rt.name as room_name,
+                           b.check_in_date,
+                           b.check_out_date
+                    FROM bookings b
+                    JOIN room_types rt ON b.room_type_id = rt.id
+                    WHERE b.guest_id = ?
+                    AND b.status IN ('pending', 'confirmed')
+                    AND (
+                        (b.check_in_date < ? AND b.check_out_date > ?) OR
+                        (b.check_in_date < ? AND b.check_out_date > ?)
+                    )
+                    LIMIT 1
+                ''', (session["guest_id"], 
+                      check_out_str, check_in_str, 
+                      check_out_str, check_in_str))
+                
+                any_user_booking = cur.fetchone()
+                
+                if any_user_booking and any_user_booking["count"] > 0:
+                    flash(f"📅 У вас уже есть бронирование номера '{any_user_booking['room_name']}' "
+                          f"на период {any_user_booking['check_in_date']} - {any_user_booking['check_out_date']}. "
+                          f"Вы не можете забронировать несколько номеров на одни и те же даты.", "warning")
+                    return render_template("booking_process.html", room_types=room_types)
+                
+                # ============ ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ - СОЗДАЕМ БРОНИРОВАНИЕ ============
                 nights = (check_out_date - check_in_date).days
                 total_price = room_type["price_per_night"] * nights
+                
+                print(f"Создаю бронирование: {nights} ночей, цена: {total_price} руб.")
                 
                 cur.execute('''
                     INSERT INTO bookings (guest_id, room_type_id, full_name, passport, phone, 
@@ -676,21 +689,39 @@ def booking_process():
                 ''', (session["guest_id"], room_type["id"], full_name, passport, phone, 
                       check_in_str, check_out_str, total_price))
                 
+                booking_id = cur.lastrowid
                 conn.commit()
-                flash("Бронирование успешно создано! Ожидайте подтверждения.", "success")
+                
+                print(f"✅ Бронирование создано! ID: {booking_id}")
+                
+                # Формируем подробное сообщение об успехе
+                success_msg = (f"✅ Бронирование №{booking_id} успешно создано!\n"
+                              f"• Номер: {room_type_name}\n"
+                              f"• Даты: {check_in_str} - {check_out_str} ({nights} ночей)\n"
+                              f"• ФИО: {full_name}\n"
+                              f"• Стоимость: {total_price:.2f} руб.\n"
+                              f"• Статус: Ожидание подтверждения")
+                
+                flash(success_msg, "success")
                 return redirect("/info_booking")
                 
-            except ValueError:
-                flash("Некорректный формат даты", "error")
+            except ValueError as e:
+                print(f"Ошибка формата даты: {e}")
+                flash("Некорректный формат даты. Используйте формат ГГГГ-ММ-ДД", "error")
             except Exception as e:
                 print(f"Ошибка бронирования: {str(e)}")
-                conn.rollback()
+                import traceback
+                traceback.print_exc()
+                if conn:
+                    conn.rollback()
                 flash(f"Ошибка при бронировании: {str(e)}", "error")
         
         return render_template("booking_process.html", room_types=room_types)
         
     except Exception as e:
         print(f"Ошибка подключения к БД: {e}")
+        import traceback
+        traceback.print_exc()
         flash("Ошибка подключения к базе данных", "error")
         return redirect("/")
     finally:
@@ -699,11 +730,14 @@ def booking_process():
 
 # ============ ОТЧЕТЫ ============
 
+# ============ ОТЧЕТЫ ============
+
 @app.route("/reports")
 @admin_required
 def reports():
     """Страница отчетов"""
-    return render_template("report_1.html")
+    return render_template("reports.html")
+
 
 @app.route("/report/free_rooms", methods=["GET", "POST"])
 @admin_required
@@ -712,11 +746,17 @@ def report_free_rooms():
     if request.method == "POST":
         date_str = request.form.get("date")
         
+        if not date_str:
+            flash("Необходимо выбрать дату", "error")
+            return redirect("/reports")
+        
         try:
             date = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
             
             conn = get_db()
             cur = conn.cursor()
+            
+            print(f"📊 Формирую отчет о свободных номерах на {date_str}")
             
             # Получаем все номера
             cur.execute("SELECT * FROM room_types ORDER BY name")
@@ -734,9 +774,13 @@ def report_free_rooms():
             # Формируем отчет
             output = StringIO()
             writer = csv.writer(output, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+            
+            # BOM для корректного отображения кириллицы в Excel
+            output.write('\ufeff')
+            
             writer.writerow(['Отчет о свободных номерах', f'Дата: {date_str}'])
             writer.writerow([])
-            writer.writerow(['Тип номера', 'Описание', 'Цена за ночь', 'Вместимость', 'Статус'])
+            writer.writerow(['Тип номера', 'Описание', 'Цена за ночь (руб.)', 'Вместимость', 'Статус'])
             
             free_count = 0
             occupied_count = 0
@@ -764,21 +808,26 @@ def report_free_rooms():
             
             conn.close()
             
+            print(f"✅ Отчет сформирован: {free_count} свободных, {occupied_count} занятых")
+            
             # Создаем ответ для скачивания
             response = make_response(output.getvalue())
             response.headers["Content-Disposition"] = f"attachment; filename=free_rooms_{date_str}.csv"
-            response.headers["Content-type"] = "text/csv; charset=utf-8"
+            response.headers["Content-type"] = "text/csv; charset=utf-8-sig"
             return response
             
         except ValueError:
             flash("Некорректный формат даты. Используйте формат ГГГГ-ММ-ДД", "error")
             return redirect("/reports")
         except Exception as e:
-            print(f"Ошибка формирования отчета: {e}")
+            import traceback
+            print(f"❌ Ошибка формирования отчета: {e}")
+            traceback.print_exc()
             flash(f"Ошибка при формировании отчета: {str(e)}", "error")
             return redirect("/reports")
     
-    return render_template("report_1.html")
+    return redirect("/reports")
+
 
 @app.route("/report/bookings", methods=["GET", "POST"])
 @admin_required
@@ -787,6 +836,10 @@ def report_bookings():
     if request.method == "POST":
         start_date = request.form.get("start_date")
         end_date = request.form.get("end_date")
+        
+        if not start_date or not end_date:
+            flash("Необходимо выбрать обе даты", "error")
+            return redirect("/reports")
         
         try:
             start = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
@@ -798,6 +851,8 @@ def report_bookings():
             
             conn = get_db()
             cur = conn.cursor()
+            
+            print(f"📊 Формирую отчет о бронированиях с {start_date} по {end_date}")
             
             cur.execute('''
                 SELECT b.*, g.username, g.email, g.phone as guest_phone,
@@ -815,6 +870,10 @@ def report_bookings():
             # Формируем отчет
             output = StringIO()
             writer = csv.writer(output, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+            
+            # BOM для корректного отображения кириллицы в Excel
+            output.write('\ufeff')
+            
             writer.writerow(['Отчет о заявках на бронирование', f'Период: {start_date} - {end_date}'])
             writer.writerow([])
             writer.writerow(['ID', 'Гость', 'Email гостя', 'Телефон гостя', 
@@ -857,20 +916,24 @@ def report_bookings():
             
             conn.close()
             
+            print(f"✅ Отчет сформирован: {len(bookings)} бронирований, {total_price:.2f} руб.")
+            
             response = make_response(output.getvalue())
             response.headers["Content-Disposition"] = f"attachment; filename=bookings_{start_date}_{end_date}.csv"
-            response.headers["Content-type"] = "text/csv; charset=utf-8"
+            response.headers["Content-type"] = "text/csv; charset=utf-8-sig"
             return response
             
         except ValueError:
             flash("Некорректный формат даты. Используйте формат ГГГГ-ММ-ДД", "error")
             return redirect("/reports")
         except Exception as e:
-            print(f"Ошибка формирования отчета: {e}")
+            import traceback
+            print(f"❌ Ошибка формирования отчета: {e}")
+            traceback.print_exc()
             flash(f"Ошибка при формировании отчета: {str(e)}", "error")
             return redirect("/reports")
     
-    return render_template("report_2.html")
+    return redirect("/reports")
 
 # ============ ОТЗЫВЫ ============
 
@@ -1095,33 +1158,49 @@ def admin_login_page():
     
     return render_template("avtorizacia_admin.html")
 
+
 @app.route("/basa_dannix")
 def basa_dannix():
     """Панель администратора"""
+    print("=== ДЕБАГ АДМИН-ПАНЕЛИ ===")
+    print(f"Сессия: {session}")
+    print(f"admin_id в сессии: {'admin_id' in session}")
+    
     if "admin_id" not in session:
+        print("❌ Администратор не авторизован")
         flash("Требуется авторизация администратора", "error")
         return redirect("/admin_login_page")
     
+    print(f"✅ Администратор авторизован: ID={session.get('admin_id')}")
+    
     conn = None
     try:
+        print("Подключаюсь к БД...")
         conn = get_db()
         cur = conn.cursor()
         
+        print("Получаю статистику...")
         cur.execute("SELECT COUNT(*) FROM guests")
         total_guests = cur.fetchone()[0]
+        print(f"Всего гостей: {total_guests}")
         
         cur.execute("SELECT COUNT(*) FROM bookings")
         total_bookings = cur.fetchone()[0]
+        print(f"Всего бронирований: {total_bookings}")
         
         cur.execute("SELECT COUNT(*) FROM bookings WHERE status = 'pending'")
         pending_bookings = cur.fetchone()[0]
+        print(f"Ожидающих: {pending_bookings}")
         
         cur.execute("SELECT COUNT(*) FROM reviews")
         total_reviews = cur.fetchone()[0]
+        print(f"Всего отзывов: {total_reviews}")
         
+        print("Получаю последних гостей...")
         cur.execute("SELECT * FROM guests ORDER BY created_at DESC LIMIT 10")
         recent_guests = cur.fetchall()
         
+        print("Получаю последние бронирования...")
         cur.execute('''
             SELECT b.*, g.username, rt.name as room_type_name
             FROM bookings b
@@ -1131,6 +1210,7 @@ def basa_dannix():
         ''')
         recent_bookings = cur.fetchall()
         
+        print("Получаю последние отзывы...")
         cur.execute('''
             SELECT r.*, g.username
             FROM reviews r
@@ -1138,6 +1218,8 @@ def basa_dannix():
             ORDER BY r.created_at DESC LIMIT 10
         ''')
         recent_reviews = cur.fetchall()
+        
+        print("✅ Все данные получены, рендерю шаблон...")
         
         return render_template(
             "basa_dannix.html",
@@ -1151,12 +1233,25 @@ def basa_dannix():
         )
         
     except Exception as e:
-        print(f"Ошибка панели администратора: {e}")
-        flash("Ошибка при загрузке данных администратора", "error")
-        return redirect("/")
+        import traceback
+        print(f"❌ КРИТИЧЕСКАЯ ОШИБКА В АДМИН-ПАНЕЛИ: {str(e)}")
+        traceback.print_exc()
+        flash(f"Ошибка при загрузке данных: {str(e)}", "error")
+        # НЕ редиректим на главную, а показываем хотя бы пустую админку
+        return render_template(
+            "basa_dannix.html",
+            total_guests=0,
+            total_bookings=0,
+            pending_bookings=0,
+            total_reviews=0,
+            recent_guests=[],
+            recent_bookings=[],
+            recent_reviews=[]
+        )
     finally:
         if conn:
             conn.close()
+
 
 @app.route("/logout")
 def logout():
@@ -1211,6 +1306,9 @@ if __name__ == "__main__":
     print("=" * 60 + "\n")
     
     try:
+        app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+        app.config['TEMPLATES_AUTO_RELOAD'] = True
+        
         app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)
     except KeyboardInterrupt:
         print("\n👋 До свидания!")
