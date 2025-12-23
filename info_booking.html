@@ -2,9 +2,8 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Гостиница L&N — Информация_брони</title>
+  <title>Гостиница L&N — Информация о бронировании</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
-  <a href="important_page.html"></a>
   <style>
     * {
       box-sizing: border-box;
@@ -35,6 +34,11 @@
       font-weight: 600;
     }
 
+    .logo a {
+      color: #4C3B3B;
+      text-decoration: none;
+    }
+
     .nav {
       display: flex;
       gap: 40px;
@@ -51,10 +55,13 @@
       color: #4C3B3B;
     }
 
+    /* Круглые иконки меньшего размера */
     .nav-item img {
-      width: 33px;
-      height: 33px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #4C3B3B;
     }
 
     main {
@@ -130,27 +137,17 @@
 <body>
 
   <header>
-    <div class="logo"><a href="important_page.html" style="color: #4C3B3B;">Гостиница L&N</a></div>
+    <div class="logo"><a href="/" style="color: #4C3B3B;">Гостиница L&N</a></div>
     <nav class="nav">
-      <div class="nav-item">
-        <a href="info_booking.html"><img src="бронирование.jpg" alt="Бронирование"></a>
-        Бронирование
-      </div>
-      <div class="nav-item">
-        <a href="info_o_nas.html">
-          <img src="онас.jpg" alt="О нас">  
-        </a>
-        О нас
-      </div>
-      <div class="nav-item">
-        <a href="avtorizacia_page.html">
-          <img src="войти.jpg" alt="Войти">
-        </a>
-        Войти
-      </div>
-      <div class="nav-item">
-       <a href="reviews.html"><img src="отзывы.jpg" alt="Отзывы"></a>
-      </div>
+      <a href="/info_booking" class="nav-item">
+        <img src="{{ url_for('static', filename='images/booking.jpg') }}" alt="Бронирование"> Бронирование
+      </a>
+      <a href="/info_o_nas" class="nav-item">
+        <img src="{{ url_for('static', filename='images/about.jpg') }}" alt="О нас"> О нас
+      </a>
+      <a href="/avtorizacia_page" class="nav-item">
+        <img src="{{ url_for('static', filename='images/login.jpg') }}" alt="Войти"> Войти
+      </a>
     </nav>
   </header>
 

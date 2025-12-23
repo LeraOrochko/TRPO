@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Гостиница L&N — БД</title>
+  <title>Гостиница L&N — Панель администратора</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
   <style>
     * {
@@ -15,6 +15,9 @@
       font-family: 'Playfair Display', serif;
       background-color: #FFBBCE;
       color: #4C3B3B;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     header {
@@ -26,6 +29,7 @@
       justify-content: space-between;
       align-items: center;
       border: 1px solid rgba(76, 59, 59, 0.7);
+      box-shadow: 0 4px 12px rgba(76, 59, 59, 0.1);
     }
 
     .logo {
@@ -34,9 +38,20 @@
       font-weight: 600;
     }
 
+    .logo a {
+      color: #4C3B3B;
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .logo a:hover {
+      opacity: 0.8;
+    }
+
     .nav {
       display: flex;
-      gap: 40px;
+      gap: 30px;
+      align-items: center;
     }
 
     .nav-item {
@@ -48,42 +63,492 @@
       font-weight: 600;
       text-decoration: none;
       color: #4C3B3B;
+      transition: transform 0.3s ease, color 0.3s ease;
     }
 
+    .nav-item:hover {
+      transform: translateY(-2px);
+      color: #2d2323;
+    }
+
+    /* Круглые иконки меньшего размера */
     .nav-item img {
-      width: 33px;
-      height: 33px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #4C3B3B;
+      transition: all 0.3s ease;
     }
 
+    .nav-item:hover img {
+      border-color: #2d2323;
+      transform: scale(1.1);
+    }
 
+    /* Кнопка выхода */
+    .logout-btn {
+      padding: 10px 24px;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+      border: 2px solid rgba(76, 59, 59, 0.7);
+      border-radius: 25px;
+      font-size: 16px;
+      font-style: italic;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .logout-btn:hover {
+      background-color: #d48fa3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(76, 59, 59, 0.2);
+      border-color: #4C3B3B;
+    }
+
+    /* Flash сообщения */
+    .flash-messages {
+      margin: 20px auto;
+      max-width: 1200px;
+      width: 90%;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .flash {
+      padding: 15px;
+      border-radius: 30px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      text-align: center;
+      border: 2px solid transparent;
+      font-weight: 600;
+    }
+
+    .flash.success {
+      background-color: #D6FFD6;
+      color: #006400;
+      border-color: #A3FFA3;
+    }
+
+    .flash.error {
+      background-color: #FFD6D6;
+      color: #8B0000;
+      border-color: #FFA3A3;
+    }
+
+    .flash.info {
+      background-color: #D6E9FF;
+      color: #00008B;
+      border-color: #A3C8FF;
+    }
+
+    main {
+      margin: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      flex: 1;
+    }
+
+    .admin-wrapper {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      padding: 40px;
+      width: 100%;
+      max-width: 1200px;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      box-shadow: 0 0 20px rgba(76, 59, 59, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .admin-title {
+      background-color: #FFBBCE;
+      border-radius: 30px;
+      padding: 15px 20px;
+      font-size: 28px;
+      font-style: italic;
+      font-weight: 600;
+      text-align: center;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      box-shadow: 0 4px 8px rgba(76, 59, 59, 0.1);
+      margin-bottom: 10px;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .stat-block {
+      background-color: #FFBBCE;
+      border-radius: 30px;
+      padding: 20px;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      flex: 1 1 30%;
+      min-width: 200px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-block:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(76, 59, 59, 0.15);
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: 700;
+      margin: 10px 0;
+      color: #4C3B3B;
+    }
+
+    .stat-label {
+      font-size: 18px;
+      font-style: italic;
+      color: #4C3B3B;
+    }
+
+    /* Кнопка отчетов */
+    .reports-section {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .reports-btn {
+      padding: 14px 32px;
+      background-color: #D6FFD6;
+      color: #006400;
+      border: 2px solid #A3FFA3;
+      border-radius: 35px;
+      font-size: 18px;
+      font-style: italic;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 4px 10px rgba(0, 100, 0, 0.1);
+    }
+
+    .reports-btn:hover {
+      background-color: #A3FFA3;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 100, 0, 0.15);
+    }
+
+    .data-block {
+      background-color: #FFBBCE;
+      border-radius: 30px;
+      padding: 30px;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      box-shadow: 0 4px 8px rgba(76, 59, 59, 0.1);
+    }
+
+    .data-block h3 {
+      font-size: 22px;
+      font-style: italic;
+      margin-bottom: 25px;
+      text-align: center;
+      color: #4C3B3B;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(76, 59, 59, 0.3);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 16px;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    table th {
+      background-color: #E3A6B6;
+      padding: 15px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 17px;
+      border-bottom: 2px solid rgba(76, 59, 59, 0.5);
+    }
+
+    table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid rgba(76, 59, 59, 0.2);
+    }
+
+    table tr:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .empty-message {
+      text-align: center;
+      font-style: italic;
+      color: rgba(76, 59, 59, 0.7);
+      padding: 20px;
+      font-size: 18px;
+    }
+
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 1024px) {
+      .stats-row {
+        gap: 15px;
+      }
+      
+      .stat-block {
+        flex: 1 1 45%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+        margin: 15px;
+      }
+      
+      .nav {
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+        align-items: stretch;
+      }
+      
+      .nav-item {
+        justify-content: center;
+      }
+      
+      .logout-btn {
+        text-align: center;
+        padding: 12px;
+      }
+      
+      main {
+        margin: 20px;
+        gap: 20px;
+      }
+      
+      .admin-wrapper {
+        padding: 25px;
+      }
+      
+      .admin-title {
+        font-size: 24px;
+        padding: 12px 18px;
+      }
+      
+      .stat-block {
+        flex: 1 1 100%;
+      }
+      
+      .stat-number {
+        font-size: 32px;
+      }
+      
+      .stat-label {
+        font-size: 16px;
+      }
+      
+      .reports-btn {
+        padding: 12px 24px;
+        font-size: 16px;
+      }
+      
+      .data-block {
+        padding: 20px;
+      }
+      
+      .data-block h3 {
+        font-size: 20px;
+      }
+      
+      table {
+        font-size: 14px;
+      }
+      
+      table th,
+      table td {
+        padding: 8px 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        font-size: 22px;
+        text-align: center;
+      }
+      
+      .nav-item {
+        font-size: 16px;
+      }
+      
+      .nav-item img {
+        width: 24px;
+        height: 24px;
+      }
+      
+      .admin-wrapper {
+        padding: 20px;
+      }
+      
+      .admin-title {
+        font-size: 22px;
+        padding: 10px 15px;
+      }
+      
+      .stat-number {
+        font-size: 28px;
+      }
+      
+      .reports-btn {
+        padding: 10px 20px;
+        font-size: 15px;
+      }
+      
+      table {
+        font-size: 13px;
+      }
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="logo"><a href="important_avtor.html" style="color: #4C3B3B;">Гостиница L&N</a></div>
+    <div class="logo"><a href="/">Гостиница L&N</a></div>
     <nav class="nav">
-      <div class="nav-item">
-       <a href="info_booking_admin.html"><img src="бронирование.jpg" alt="Бронирование"></a> 
-        Бронирование
-      </div>
-      <div class="nav-item">
-        <a href="o_nas_admin.html">
-        <img src="онас.jpg" alt="О нас">  
-        </a>
-        О нас
-      </div>
-      <div class="nav-item">
-        <a href="avtorizacia_page.html">
-           <img src="войти.jpg" alt="Войти"> 
-        </a> 
-        Войти
-      </div>
-      <div class="nav-item">
-        <a href="basa_dannix.html"><img src="инфа.jpg" alt="Информация"></a>
-      </div>
+      <a href="/booking_process" class="nav-item">
+        <img src="{{ url_for('static', filename='images/booking.jpg') }}" alt="Бронирование"> Бронирование
+      </a>
+      <a href="/info_o_nas" class="nav-item">
+        <img src="{{ url_for('static', filename='images/about.jpg') }}" alt="О нас"> О нас
+      </a>
+      <a href="/reports" class="nav-item">
+        <img src="{{ url_for('static', filename='images/info.jpg') }}" alt="Отчеты"> Отчеты
+      </a>
+      <a href="/admin/logout" class="logout-btn">Выйти</a>
     </nav>
   </header>
+
+  <!-- Flash сообщения -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    <div class="admin-wrapper">
+      <div class="admin-title">Панель администратора</div>
+
+      <!-- Статистика -->
+      <div class="stats-row">
+        <div class="stat-block">
+          <div class="stat-label">Всего гостей</div>
+          <div class="stat-number">{{ total_guests }}</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-label">Всего бронирований</div>
+          <div class="stat-number">{{ total_bookings }}</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-label">Ожидают подтверждения</div>
+          <div class="stat-number">{{ pending_bookings }}</div>
+        </div>
+      </div>
+
+      <!-- Кнопка отчетов -->
+      <div class="reports-section">
+        <a href="/reports" class="reports-btn">📊 Перейти к отчетам</a>
+      </div>
+
+      <!-- Последние бронирования -->
+      <div class="data-block">
+        <h3>Последние бронирования</h3>
+        {% if recent_bookings %}
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Гость</th>
+              <th>Тип номера</th>
+              <th>Заезд</th>
+              <th>Выезд</th>
+              <th>Статус</th>
+              <th>Сумма</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for booking in recent_bookings %}
+            <tr>
+              <td>{{ booking['id'] }}</td>
+              <td>{{ booking['username'] }}</td>
+              <td>{{ booking['room_type_name'] or 'Не указан' }}</td>
+              <td>{{ booking['check_in_date'] }}</td>
+              <td>{{ booking['check_out_date'] }}</td>
+              <td>{{ booking['status'] }}</td>
+              <td>{{ booking['total_price'] or 0 }} руб.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="empty-message">Бронирований пока нет</p>
+        {% endif %}
+      </div>
+
+      <!-- Последние гости -->
+      <div class="data-block">
+        <h3>Последние зарегистрированные гости</h3>
+        {% if recent_guests %}
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Логин</th>
+              <th>Email</th>
+              <th>ФИО</th>
+              <th>Дата регистрации</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for guest in recent_guests %}
+            <tr>
+              <td>{{ guest['id'] }}</td>
+              <td>{{ guest['username'] }}</td>
+              <td>{{ guest['email'] }}</td>
+              <td>{{ guest['full_name'] or '—' }}</td>
+              <td>{{ guest['created_at'] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="empty-message">Гостей пока нет</p>
+        {% endif %}
+      </div>
+    </div>
+  </main>
+
 </body>
 </html>

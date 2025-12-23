@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Гостиница LEN — Авторизация</title>
+  <title>Гостиница L&N — Авторизация администратора</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
   <style>
     * {
@@ -32,12 +32,23 @@
       justify-content: space-between;
       align-items: center;
       border: 1px solid rgba(76, 59, 59, 0.7);
+      box-shadow: 0 4px 12px rgba(76, 59, 59, 0.1);
     }
 
     .logo {
       font-size: 26px;
       font-style: italic;
       font-weight: 600;
+    }
+
+    .logo a {
+      color: #4C3B3B;
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .logo a:hover {
+      opacity: 0.8;
     }
 
     .nav {
@@ -54,12 +65,68 @@
       font-weight: 600;
       text-decoration: none;
       color: #4C3B3B;
+      transition: transform 0.3s ease, color 0.3s ease;
     }
 
+    .nav-item:hover {
+      transform: translateY(-2px);
+      color: #2d2323;
+    }
+
+    /* Круглые иконки меньшего размера */
     .nav-item img {
-      width: 33px;
-      height: 33px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #4C3B3B;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item:hover img {
+      border-color: #2d2323;
+      transform: scale(1.1);
+    }
+
+    /* Flash сообщения */
+    .flash-messages {
+      width: 90%;
+      max-width: 1000px;
+      margin-bottom: 20px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .flash {
+      padding: 15px;
+      border-radius: 30px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      text-align: center;
+      border: 2px solid transparent;
+      font-weight: 600;
+    }
+
+    .flash.success {
+      background-color: #D6FFD6;
+      color: #006400;
+      border-color: #A3FFA3;
+    }
+
+    .flash.error {
+      background-color: #FFD6D6;
+      color: #8B0000;
+      border-color: #FFA3A3;
+    }
+
+    .flash.info {
+      background-color: #D6E9FF;
+      color: #00008B;
+      border-color: #A3C8FF;
     }
 
     .auth-container {
@@ -76,9 +143,20 @@
 
     .auth-image {
       width: 400px;
-      background-image: url('орхидея.jpg'); /* замените на своё изображение */
+      background-image: url('../static/images/orchid.jpg');
       background-size: cover;
       background-position: center;
+      position: relative;
+    }
+
+    .auth-image::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(227, 166, 182, 0.3), rgba(255, 187, 206, 0.3));
     }
 
     .auth-form {
@@ -101,66 +179,154 @@
       color: #4C3B3B;
       border: 1px solid rgba(76, 59, 59, 0.7);
       margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(76, 59, 59, 0.1);
     }
 
     label {
       font-size: 18px;
       font-style: italic;
       margin-bottom: 5px;
+      display: block;
     }
 
     input {
-      padding: 10px 15px;
-      border-radius: 20px;
-      border: 1px solid rgba(76, 59, 59, 0.5);
+      padding: 12px 18px;
+      border-radius: 25px;
+      border: 2px solid rgba(76, 59, 59, 0.3);
       font-size: 16px;
       font-family: 'Playfair Display', serif;
-      background-color: #fff;
+      background-color: rgba(255, 255, 255, 0.9);
       color: #4C3B3B;
       width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4C3B3B;
+      box-shadow: 0 0 0 3px rgba(76, 59, 59, 0.1);
+      background-color: white;
+    }
+
+    input::placeholder {
+      color: rgba(76, 59, 59, 0.6);
+      font-style: italic;
     }
 
     .login-button {
       margin-top: 20px;
-      padding: 12px 24px;
+      padding: 14px 28px;
       background-color: #FFBBCE;
       color: #4C3B3B;
-      border: 1px solid rgba(76, 59, 59, 0.7);
-      border-radius: 30px;
+      border: 2px solid rgba(76, 59, 59, 0.7);
+      border-radius: 35px;
       font-size: 16px;
       font-style: italic;
       font-weight: 700;
       font-family: 'Playfair Display', serif;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
       max-width: 300px;
       width: 100%;
       margin-left: auto;
       margin-right: auto;
+      display: block;
     }
 
     .login-button:hover {
       background-color: #d48fa3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(76, 59, 59, 0.2);
+      border-color: #4C3B3B;
     }
 
-    @media (max-width: 900px) {
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 1024px) {
       .auth-container {
         flex-direction: column;
-        align-items: center;
+        width: 95%;
       }
-
+      
       .auth-image {
         width: 100%;
         height: 200px;
       }
-
+      
       .auth-form {
-        padding: 40px 20px;
+        padding: 40px 25px;
       }
+      
+      .auth-image::before {
+        background: linear-gradient(90deg, rgba(227, 166, 182, 0.4), rgba(255, 187, 206, 0.4));
+      }
+    }
 
-      .nav {
+    @media (max-width: 768px) {
+      header {
         flex-direction: column;
         gap: 20px;
+        padding: 20px;
+      }
+      
+      .nav {
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .nav-item {
+        font-size: 16px;
+      }
+      
+      .nav-item img {
+        width: 24px;
+        height: 24px;
+      }
+      
+      .auth-title {
+        font-size: 24px;
+        padding: 12px;
+      }
+      
+      label {
+        font-size: 16px;
+      }
+      
+      input {
+        padding: 10px 15px;
+        font-size: 15px;
+      }
+      
+      .login-button {
+        max-width: 250px;
+        padding: 12px 24px;
+      }
+      
+      .flash-messages {
+        width: 95%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-image {
+        height: 150px;
+      }
+      
+      .auth-form {
+        padding: 30px 20px;
+      }
+      
+      .nav {
+        gap: 15px;
+      }
+      
+      .nav-item {
+        font-size: 15px;
+      }
+      
+      .flash {
+        padding: 12px;
+        font-size: 15px;
       }
     }
   </style>
@@ -168,43 +334,50 @@
 <body>
 
   <header>
-    <div class="logo"><a href="important_page.html" style="color: #4C3B3B;">Гостиница L&N</a></div>
+    <div class="logo"><a href="{{ url_for('index') }}">Гостиница L&N</a></div>
     <nav class="nav">
-      <div class="nav-item">
-       <a href="info_booking_admin.html"><img src="бронирование.jpg" alt="Бронирование"></a> 
-        Бронирование
-      </div>
-      <div class="nav-item">
-        <a href="o_nas_admin.html">
-        <img src="онас.jpg" alt="О нас">  
-        </a>
-        О нас
-      </div>
-      <div class="nav-item">
-         <a href="avtorizacia_page.html">
-           <img src="войти.jpg" alt="Войти"> 
-        </a> 
-        Войти
-      </div>
-      <div class="nav-item">
-        <a href="basa_dannix.html"><img src="инфа.jpg" alt="Информация"></a>
-      </div>
+      <a href="/booking_process" class="nav-item">
+        <img src="{{ url_for('static', filename='images/booking.jpg') }}" alt="Бронирование"> Бронирование
+      </a>
+      <a href="/info_o_nas" class="nav-item">
+        <img src="{{ url_for('static', filename='images/about.jpg') }}" alt="О нас"> О нас
+      </a>
+      <a href="/avtorizacia_page" class="nav-item">
+        <img src="{{ url_for('static', filename='images/login.jpg') }}" alt="Войти"> Войти
+      </a>
+      <a href="/basa_dannix" class="nav-item">
+        <img src="{{ url_for('static', filename='images/info.jpg') }}" alt="Информация">
+      </a>
     </nav>
   </header>
+
+  <!-- Flash сообщения -->
+  <div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
 
   <div class="auth-container">
     <div class="auth-image"></div>
 
     <div class="auth-form">
-      <div class="auth-title">Авторизация</div>
+      <div class="auth-title">Авторизация администратора</div>
 
-      <label for="username">Логин:</label>
-      <input type="text" id="username" name="username" placeholder="Введите логин">
+      <!-- ФОРМА С ОТПРАВКОЙ НА БЭКЕНД -->
+      <form method="POST" action="/admin_login_page">
+        <label for="username">Логин:</label>
+        <input type="text" id="username" name="username" placeholder="Введите логин" required>
 
-      <label for="password">Пароль:</label>
-      <input type="password" id="password" name="password" placeholder="Введите пароль">
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" placeholder="Введите пароль" required>
 
-      <a href="important_avtor.html" style="color: #4C3B3B;"> <button class="login-button">Войти</button></a>
+        <button type="submit" class="login-button">Войти</button>
+      </form>
     </div>
   </div>
 

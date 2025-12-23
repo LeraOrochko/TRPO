@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Гостиница L&N — Отчеты</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Playfair Display', serif;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+    }
+
+    header {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      margin: 20px;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    .logo {
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .logo a {
+      color: #4C3B3B;
+      text-decoration: none;
+    }
+
+    .nav {
+      display: flex;
+      gap: 40px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-style: italic;
+      font-weight: 600;
+      text-decoration: none;
+      color: #4C3B3B;
+    }
+
+    /* Flash сообщения */
+    .flash-messages {
+      margin: 20px auto;
+      max-width: 1200px;
+      width: 90%;
+    }
+
+    .flash {
+      padding: 15px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      text-align: center;
+      border: 1px solid;
+    }
+
+    .flash.success {
+      background-color: #d4edda;
+      color: #155724;
+      border-color: #c3e6cb;
+    }
+
+    .flash.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-color: #f5c6cb;
+    }
+
+    main {
+      margin: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .reports-wrapper {
+      background-color: #E3A6B6;
+      border-radius: 40px;
+      padding: 40px;
+      width: 100%;
+      max-width: 1000px;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      box-shadow: 0 0 10px rgba(76, 59, 59, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .reports-title {
+      background-color: #FFBBCE;
+      border-radius: 30px;
+      padding: 15px 20px;
+      font-size: 28px;
+      font-style: italic;
+      font-weight: 600;
+      text-align: center;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    .report-card {
+      background-color: #FFBBCE;
+      border-radius: 30px;
+      padding: 30px;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+    }
+
+    .report-card h3 {
+      font-size: 22px;
+      font-style: italic;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .report-card p {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    label {
+      font-size: 18px;
+      font-style: italic;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      padding: 10px 15px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border-radius: 20px;
+      border: 1px solid rgba(76, 59, 59, 0.5);
+      font-size: 16px;
+      font-family: 'Playfair Display', serif;
+      background-color: #fff;
+      color: #4C3B3B;
+    }
+
+    .submit-button {
+      padding: 12px 24px;
+      background-color: #E3A6B6;
+      color: #4C3B3B;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      border-radius: 30px;
+      font-size: 16px;
+      font-style: italic;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+    }
+
+    .submit-button:hover {
+      background-color: #d48fa3;
+    }
+
+    .back-button {
+      padding: 12px 24px;
+      background-color: #FFBBCE;
+      color: #4C3B3B;
+      border: 1px solid rgba(76, 59, 59, 0.7);
+      border-radius: 30px;
+      font-size: 16px;
+      font-style: italic;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .back-button:hover {
+      background-color: #d48fa3;
+    }
+
+    @media (max-width: 900px) {
+      .nav {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo"><a href="/">Гостиница L&N</a></div>
+    <nav class="nav">
+      <a href="/basa_dannix" class="nav-item">← Назад в админ-панель</a>
+      <a href="/admin/logout" class="nav-item">Выйти</a>
+    </nav>
+  </header>
+
+  <!-- Flash сообщения -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    <div class="reports-wrapper">
+      <div class="reports-title">Система отчетов</div>
+
+      <!-- Отчет 1: Свободные номера -->
+      <div class="report-card">
+        <h3>📋 Отчет о свободных номерах</h3>
+        <p>Получите список свободных и занятых номеров на конкретную дату</p>
+        
+        <form method="POST" action="/report/free_rooms">
+          <label for="date">Выберите дату:</label>
+          <input type="date" id="date" name="date" required>
+          
+          <button type="submit" class="submit-button">Скачать отчет (CSV)</button>
+        </form>
+      </div>
+
+      <!-- Отчет 2: Бронирования за период -->
+      <div class="report-card">
+        <h3>📊 Отчет о бронированиях за период</h3>
+        <p>Получите список всех принятых заявок за указанный временной период</p>
+        
+        <form method="POST" action="/report/bookings">
+          <label for="start_date">Дата начала периода:</label>
+          <input type="date" id="start_date" name="start_date" required>
+          
+          <label for="end_date">Дата окончания периода:</label>
+          <input type="date" id="end_date" name="end_date" required>
+          
+          <button type="submit" class="submit-button">Скачать отчет (CSV)</button>
+        </form>
+      </div>
+
+      <div style="text-align: center;">
+        <a href="/basa_dannix" class="back-button">← Вернуться в панель администратора</a>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

@@ -18,6 +18,7 @@
       color: #4C3B3B;
     }
 
+    /* ИСПРАВЛЕННАЯ ВЕРХНЯЯ ПАНЕЛЬ */
     header {
       background-color: #E3A6B6;
       border-radius: 40px;
@@ -35,6 +36,11 @@
       font-weight: 600;
     }
 
+    .logo a {
+      color: #4C3B3B;
+      text-decoration: none;
+    }
+
     .nav {
       display: flex;
       gap: 40px;
@@ -49,14 +55,29 @@
       font-weight: 600;
       text-decoration: none;
       color: #4C3B3B;
+      transition: transform 0.3s ease;
     }
 
+    .nav-item:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Круглые иконки меньшего размера */
     .nav-item img {
-      width: 33px;
-      height: 33px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #4C3B3B;
+      transition: all 0.3s ease;
     }
 
+    .nav-item:hover img {
+      border-color: #2d2323;
+      transform: scale(1.1);
+    }
+
+    /* Остальной код без изменений */
     main {
       display: flex;
       justify-content: center;
@@ -151,40 +172,34 @@
 </head>
 <body>
 
+  <!-- ИСПРАВЛЕННАЯ ВЕРХНЯЯ ПАНЕЛЬ -->
   <header>
-    <div class="logo"><a href="important_page.html" style="color: #4C3B3B;">Гостиница L&N</a></div>
+    <div class="logo"><a href="/" style="color: #4C3B3B;">Гостиница L&N</a></div>
     <nav class="nav">
-      <div class="nav-item">
-        <a href="info_booking.html"><img src="бронирование.jpg" alt="Бронирование"></a> Бронирование
-      </div>
-      <div class="nav-item">
-        <a href="info_o_nas.html">
-          <img src="онас.jpg" alt="О нас">
-        </a> О нас
-      </div>
-      <div class="nav-item">
-         <a href="avtorizacia_page.html">
-           <img src="войти.jpg" alt="Войти"> 
-        </a> 
-         Войти
-      </div>
-      <div class="nav-item">
-        <a href="reviews.html"><img src="отзывы.jpg" alt="Отзывы"></a>
-      </div>
+      <a href="/booking_process" class="nav-item">
+        <img src="{{ url_for('static', filename='images/booking.jpg') }}" alt="Бронирование"> Бронирование
+      </a>
+      <a href="/info_o_nas" class="nav-item">
+        <img src="{{ url_for('static', filename='images/about.jpg') }}" alt="О нас"> О нас
+      </a>
+      <a href="/avtorizacia_page" class="nav-item">
+        <img src="{{ url_for('static', filename='images/login.jpg') }}" alt="Войти"> Войти
+      </a>
     </nav>
   </header>
 
+  <!-- ОСТАЛЬНОЙ КОНТЕНТ БЕЗ ИЗМЕНЕНИЙ -->
   <main>
     <div class="card">
-      <div class="photo-block">
-        <img src="экономмный_номер.png" alt="Номер Экономный">
-      </div>
+<div class="photo-block">
+  <img src="{{ url_for('static', filename='images/экономный_номер.png') }}" alt="Номер Экономный">
+</div>
       <div class="text-block">
         <h1>Номер "Экономный"</h1>
         <p>
           Добро пожаловать в номер категории "Экономный" - идеальный выбор для тех, кто ценит комфорт по разумной цене. Вас ждет уютная кровать, рабочее место, телевизор, холодильник и все необходимое для спокойного отдыха. Номер подойдет как для коротких поездок, так и для туристов, которые весь день проводят в городе. Чисто, удобно и доступно - без лишнего, но с заботой о вашем комфорте.
         </p>
-         <a href="booking_process.html" style="color: #4C3B3B;"><button class="order-button">Оформить заказ</button></a>
+         <a href="/booking_process" style="color: #4C3B3B;"><button class="order-button">Оформить заказ</button></a>
       </div>
     </div>
   </main>

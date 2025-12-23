@@ -56,12 +56,21 @@
       font-weight: 600;
       text-decoration: none;
       color: #4C3B3B;
+      transition: transform 0.2s ease;
     }
 
-    .nav-item img {
-      width: 33px;
-      height: 33px;
+    .nav-item:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Стили для круглых иконок */
+    .nav-icon {
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #4C3B3B;
+      transition: all 0.3s ease;
     }
 
     .auth-wrapper {
@@ -78,7 +87,7 @@
 
     .image-side {
       width: 400px;
-      background-image: url('орхидея.jpg');
+      background-image: url('../static/images/orchid.jpg');
       background-size: cover;
       background-position: center;
       display: flex;
@@ -86,16 +95,30 @@
       justify-content: space-between;
       padding: 30px 20px;
       color: #4C3B3B;
+      position: relative;
+    }
+
+    .image-side::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(227, 166, 182, 0.3), rgba(255, 187, 206, 0.3));
     }
 
     .overlay-text {
-      background-color: rgba(255, 255, 255, 0.7);
+      background-color: rgba(255, 255, 255, 0.85);
       padding: 15px;
       border-radius: 40px;
       font-size: 20px;
       font-style: italic;
       font-weight: 600;
       text-align: center;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(5px);
     }
 
     .register-button {
@@ -109,13 +132,19 @@
       font-weight: 700;
       font-family: 'Playfair Display', serif;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
       align-self: center;
       margin-top: 20px;
+      position: relative;
+      z-index: 1;
+      text-decoration: none;
+      display: inline-block;
     }
 
     .register-button:hover {
-      background-color: #f3a9c0;
+      background-color: #d48fa3;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(76, 59, 59, 0.2);
     }
 
     .form-side {
@@ -143,23 +172,38 @@
       width: 100%;
       margin-left: auto;
       margin-right: auto;
+      box-shadow: 0 4px 8px rgba(76, 59, 59, 0.1);
     }
 
     label {
       font-size: 18px;
       font-style: italic;
       margin-bottom: 5px;
+      display: block;
     }
 
     input {
-      padding: 10px 15px;
-      border-radius: 20px;
-      border: 1px solid rgba(76, 59, 59, 0.5);
+      padding: 12px 18px;
+      border-radius: 25px;
+      border: 2px solid rgba(76, 59, 59, 0.3);
       font-size: 16px;
       font-family: 'Playfair Display', serif;
-      background-color: #fff;
+      background-color: rgba(255, 255, 255, 0.9);
       color: #4C3B3B;
       width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4C3B3B;
+      box-shadow: 0 0 0 3px rgba(76, 59, 59, 0.1);
+      background-color: white;
+    }
+
+    input::placeholder {
+      color: rgba(76, 59, 59, 0.6);
+      font-style: italic;
     }
 
     .button-group {
@@ -172,51 +216,163 @@
 
     .form-button,
     .admin-button {
-      padding: 12px 24px;
+      padding: 14px 28px;
       background-color: #FFBBCE;
       color: #4C3B3B;
-      border: 1px solid rgba(76, 59, 59, 0.7);
-      border-radius: 30px;
+      border: 2px solid rgba(76, 59, 59, 0.7);
+      border-radius: 35px;
       font-size: 16px;
       font-style: italic;
       font-weight: 700;
       font-family: 'Playfair Display', serif;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
       max-width: 300px;
       width: 100%;
       text-align: center;
       text-decoration: none;
+      display: inline-block;
     }
 
     .form-button:hover,
     .admin-button:hover {
       background-color: #d48fa3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(76, 59, 59, 0.2);
     }
 
-    @media (max-width: 900px) {
+    /* Стили для сообщений об ошибках/успехе */
+    .flash-messages {
+      margin-bottom: 20px;
+    }
+    
+    .alert {
+      padding: 15px;
+      border-radius: 30px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: 600;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .alert-error {
+      background-color: #FFD6D6;
+      border: 2px solid #FFA3A3;
+      color: #8B0000;
+    }
+    
+    .alert-success {
+      background-color: #D6FFD6;
+      border: 2px solid #A3FFA3;
+      color: #006400;
+    }
+    
+    .alert-info {
+      background-color: #D6E9FF;
+      border: 2px solid #A3C8FF;
+      color: #00008B;
+    }
+
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 1024px) {
+      .auth-wrapper {
+        flex-direction: column;
+        width: 95%;
+      }
+      
+      .image-side {
+        width: 100%;
+        height: 200px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        padding: 20px;
+      }
+      
+      .image-side::before {
+        background: linear-gradient(90deg, rgba(227, 166, 182, 0.4), rgba(255, 187, 206, 0.4));
+      }
+      
+      .overlay-text {
+        margin: 0;
+      }
+      
+      .register-button {
+        margin-top: 0;
+      }
+      
+      .form-side {
+        padding: 40px 25px;
+      }
+    }
+
+    @media (max-width: 768px) {
       header {
         flex-direction: column;
         gap: 20px;
+        padding: 20px;
       }
-
-      .auth-wrapper {
+      
+      .nav {
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .nav-item {
+        font-size: 16px;
+      }
+      
+      .nav-icon {
+        width: 24px;
+        height: 24px;
+      }
+      
+      .auth-title-box {
+        font-size: 24px;
+        padding: 12px;
+      }
+      
+      .button-group {
         flex-direction: column;
         align-items: center;
       }
+      
+      .form-button,
+      .admin-button {
+        max-width: 250px;
+      }
+    }
 
+    @media (max-width: 480px) {
       .image-side {
-        width: 100%;
-        padding: 20px;
-      }
-
-      .form-side {
-        padding: 40px 20px;
-      }
-
-      .nav {
+        height: 180px;
         flex-direction: column;
-        gap: 20px;
+        gap: 15px;
+      }
+      
+      .overlay-text {
+        font-size: 18px;
+        padding: 10px 15px;
+      }
+      
+      .register-button {
+        padding: 10px 20px;
+        font-size: 15px;
+      }
+      
+      label {
+        font-size: 16px;
+      }
+      
+      input {
+        padding: 10px 15px;
+        font-size: 15px;
       }
     }
   </style>
@@ -225,20 +381,17 @@
 
   <header>
     <div class="logo">
-      <a href="important_page.html">Гостиница L&N</a>
+      <a href="{{ url_for('index') }}">Гостиница L&N</a>
     </div>
     <nav class="nav">
-      <a href="info_booking.html" class="nav-item">
-        <img src="бронирование.jpg" alt="Бронирование"> Бронирование
+      <a href="/booking_process" class="nav-item">
+        <img src="{{ url_for('static', filename='images/booking.jpg') }}" alt="Бронирование" class="nav-icon"> Бронирование
       </a>
-      <a href="info_o_nas.html" class="nav-item">
-        <img src="онас.jpg" alt="О нас"> О нас
+      <a href="/info_o_nas" class="nav-item">
+        <img src="{{ url_for('static', filename='images/about.jpg') }}" alt="О нас" class="nav-icon"> О нас
       </a>
-      <a href="avtorizacia_page.html" class="nav-item">
-        <img src="войти.jpg" alt="Войти"> Войти
-      </a>
-      <a href="reviews.html" class="nav-item">
-        <img src="отзывы.jpg" alt="Отзывы">
+      <a href="/avtorizacia_page" class="nav-item">
+        <img src="{{ url_for('static', filename='images/login.jpg') }}" alt="Войти" class="nav-icon"> Войти
       </a>
     </nav>
   </header>
@@ -246,31 +399,41 @@
   <div class="auth-wrapper">
     <div class="image-side">
       <div class="overlay-text">Уже есть аккаунт?</div>
-      <button class="register-button">
-        <a href="avtorizacia_page.html" style="color: #4C3B3B; text-decoration: none;">Войти</a>
-      </button>
+      <a href="/avtorizacia_page" class="register-button">Войти</a>
     </div>
-<form action="{{ url_for('registrazia_page') }}" method="get">
-  <div class="form-side">
+    
+    <div class="form-side">
       <div class="auth-title-box">Регистрация</div>
-
-      <label for="username">Логин:</label>
-      <input type="text" id="username" name="username" placeholder="Введите логин">
-
-      <label for="email">Электронная почта:</label>
-      <input type="email" id="email" name="email" placeholder="Введите email">
-
-      <label for="password">Пароль:</label>
-      <input type="password" id="password" name="password" placeholder="Введите пароль">
-
-      <label for="confirm-password">Повторите пароль:</label>
-      <input type="password" id="confirm-password" name="confirm-password" placeholder="Введите пароль повторно">
-
-      <div class="button-group">
-        <button type="submit" class="form-button">Зарегистрироваться</button>
-      </form>
-        <a href="avtorizacia_admin.html" class="admin-button">Войти как администратор</a>
+      
+      <!-- Сообщения flash -->
+      <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
       </div>
+      
+      <form action="{{ url_for('registrazia_page') }}" method="post">
+        <label for="username">Логин:</label>
+        <input type="text" id="username" name="username" placeholder="Введите логин" required>
+
+        <label for="email">Электронная почта:</label>
+        <input type="email" id="email" name="email" placeholder="Введите email" required>
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" placeholder="Введите пароль" required minlength="6">
+
+        <label for="confirm_password">Повторите пароль:</label>
+        <input type="password" id="confirm_password" name="confirm_password" placeholder="Введите пароль повторно" required minlength="6">
+
+        <div class="button-group">
+          <button type="submit" class="form-button">Зарегистрироваться</button>
+          <a href="{{ url_for('admin_login_page') }}" class="admin-button">Войти как администратор</a>
+        </div>
+      </form>
     </div>
   </div>
 
